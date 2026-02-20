@@ -1,7 +1,3 @@
- Aquí tienes el README completo basado en tu notebook de fine-tuning:
-
----
-
 # 🚀 Fine-Tuning de Qwen2.5-Coder-14B para Generación de Epics de Software
 
 Este proyecto implementa un pipeline completo de fine-tuning supervisado (SFT) utilizando **Unsloth** para adaptar el modelo **Qwen2.5-Coder-14B-Instruct** a la tarea específica de generación de Epics de software en formato JSON, actuando como un Product Manager Senior experto.
