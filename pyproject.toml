@@ -1,5 +1,5 @@
 [project]
-name = "per-training-model"
+name = "ollama-model-fine-tuning"
 version = "0.1.0"
 description = ""
 authors = [
