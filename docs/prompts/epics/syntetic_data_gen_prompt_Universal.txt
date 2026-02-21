@@ -1,0 +1,66 @@
+Eres un Arquitecto de Software Senior, Product Manager experto y un Maestro en la Generación de Datos Sintéticos para el Fine-Tuning de LLMs. Tu objetivo es crear un dataset impecable de Épicas (Epics) en formato JSONL, basado estrictamente en los inputs que tú mismo vas a generar.
+
+### TAREA INICIAL (AUTOCONTENIDA)
+Primero, debes **inventar un proyecto de software realista** sobre el cual trabajarás. El proyecto puede ser de cualquier industria (fintech, salud, logística, retail, manufactura, etc.) y debe encajar en una de estas categorías:
+
+- DevOps (ej. implementación de infraestructura como código, CI/CD, monitoreo)
+- Desarrollo de una nueva funcionalidad o producto (ej. feature crítica, microservicio)
+- Migración (ej. on-premise a nube, cambio de base de datos, monolito a microservicios)
+- Modernización de software (ej. actualización de frameworks, refactorización, adopción de contenedores)
+- Actualización de software por compliance o seguridad (ej. parches, actualización de librerías, hardening)
+
+Una vez que hayas elegido el tipo de proyecto y la industria, define:
+
+1.  **Descripción del Proyecto/Servicio:** Nombre del proyecto, objetivo principal y contexto de negocio.
+2.  **Diagrama de Actividades (PlantUML/Texto):** Crea un flujo de trabajo E2E (de principio a fin) que describa las actividades técnicas y de gestión necesarias para completar el proyecto. Debe tener al menos 5 actividades y ser lo suficientemente detallado para extraer épicas de él. Puedes usar pseudocódigo o una descripción textual estructurada si no quieres escribir PlantUML puro, pero debe ser claro.
+
+### METODOLOGÍA: CHAIN OF THOUGHT (PASO A PASO) NOTA: sin imprimir nada por pantalla
+1.  **Ideación del Proyecto:** Define el proyecto (tipo, industria, nombre, objetivo) y justifica brevemente por qué es relevante.
+2.  **Diseño del Diagrama de Actividades:** Crea un flujo de trabajo lógico y secuencial. Piensa en fases como: Inicio/Planificación, Análisis, Ejecución Técnica, Pruebas, Despliegue, Cierre. Asegúrate de que incluya actividades técnicas concretas (ej. "Configurar cluster Kubernetes", "Escribir script de migración de datos", "Implementar pipeline CI/CD con GitHub Actions").
+3.  **Descompresión del Proyecto:** Analiza la descripción del proyecto y el diagrama de actividades que creaste. ¿Cuál es el objetivo principal y la arquitectura subyacente?
+4.  **Mapeo de Actividades a Épicas:** Agrupa las acciones del diagrama en 3 a 7 grandes bloques lógicos (Épicas). Justifica por qué las agrupaste así.
+5.  **Secuenciación y Dependencias:** Define el orden de ejecución. ¿Qué Épica debe terminarse antes de poder iniciar la siguiente? (Esto alimentará el campo 'dependencies').
+6.  **Profundidad Técnica:** Para cada Épica identificada, define brevemente el stack tecnológico, los riesgos críticos y los criterios de aceptación en formato BDD.
+
+### REGLAS ESTRICTAS DE SALIDA
+-   **Formato JSONL:** Cada Épica debe ser un objeto JSON válido y ocupar **UNA SOLA LÍNEA**. Sin saltos de línea internos, sin formateo pretty-print.
+-   **Esquema:** Debes usar exactamente la estructura mostrada en el "TARGET SCHEMA".
+-   **Restricciones de Datos:** `epic_id` debe ser EP-001, EP-002, etc. `priority` solo puede ser "High", "Medium" o "Low". Los campos de listas (`acceptance_criteria`, `dependencies`, `risks`, `success_metrics`) deben ser Arrays de strings.
+-   **Autocontenido:** Toda la información necesaria para generar las épicas (descripción del proyecto y diagrama de actividades) debe ser creada por ti en el proceso. **No uses proyectos predefinidos externos.**
+-   **Output Limpio:** El único contenido de tu respuesta debe ser el JSONL. No incluyas nada más: ni presentaciones, ni explicaciones, ni el proyecto inventado, ni el diagrama de actividades. Solo las líneas JSON.
+
+### TARGET SCHEMA (ESTRUCTURA EXACTA)
+{
+  "input": {
+    "context": "Contexto estratégico y técnico profundo de la épica",
+    "business_requirements": "Necesidades del negocio justificadas detalladamente",
+    "technical_requirements": "Detalles técnicos específicos, stack, arquitectura y tareas de ingeniería",
+    "project_context": "Fase del proyecto, propósito y relación con el diagrama de actividades",
+    "stakeholder_requirements": "Expectativas claras de los interesados/equipos"
+  },
+  "output": {
+    "epic_id": "EP-00X",
+    "title": "Título profesional y conciso",
+    "description": "Resumen ejecutivo claro de la épica",
+    "acceptance_criteria": ["Criterio verificable 1", "Criterio verificable 2"],
+    "priority": "High/Medium/Low",
+    "estimated_effort": "XX-XX hrs",
+    "business_value": "Impacto real y medible en el negocio",
+    "dependencies": ["EP-00X" o vacío si no tiene dependencias],
+    "risks": ["Riesgo identificado 1", "Riesgo identificado 2"],
+    "success_metrics": ["Métrica cuantitativa 1", "Métrica cuantitativa 2"]
+  },
+  "metadata": { 
+    "source_file": "output/generado_sintetico/epics.json", 
+    "type": "epic" 
+  }
+}
+
+### OUTPUT (ONLY JSONL)
+
+**NOTA IMPORTANTE:** 
+- Sé técnico y específico. Cada épica debe representar un bloque de trabajo coherente que pueda completarse idealmente en un rango de 40 a 80 horas (una o dos semanas de trabajo). 
+- Asegúrate de que las épicas no sean demasiado genéricas (como "Fase de Desarrollo") sino que tengan un objetivo claro y acotado (ej. "Implementar el pipeline de CI/CD para el microservicio de pagos").
+- El campo `estimated_effort` debe reflejar este rango (ej. "40-60 hrs").
+
+Ahora, procede a generar el proyecto, el diagrama de actividades y finalmente el JSONL con las épicas.

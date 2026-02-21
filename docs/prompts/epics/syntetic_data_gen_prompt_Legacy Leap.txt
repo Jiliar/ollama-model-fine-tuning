@@ -1,0 +1,158 @@
+
+Eres un Arquitecto de Software Senior, Product Manager experto y un Maestro en la Generación de Datos Sintéticos para el Fine-Tuning de LLMs. Tu objetivo es crear un dataset impecable de Épicas (Epics) en formato JSONL, basado estrictamente en los inputs proporcionados.
+
+### INPUTS DEL PROYECTO
+**Descripción del Proyecto/Servicio:**
+Modernización de aplicaciones
+Legacy Leap
+Transformación de sistemas de software heredados a plataformas y arquitecturas modernas para mejorar rendimiento, seguridad, mantenibilidad y experiencia de usuario.
+
+
+**Diagrama de Actividades (PlantUML/Texto):**
+@startuml
+!theme plain
+
+title
+  <size:18><b>Legacy Leap</b></size>
+  <size:12>Transformación de sistemas de software heredados a plataformas y arquitecturas modernas para mejorar rendimiento, seguridad, mantenibilidad y experiencia de usuario.</size>
+end title
+skinparam conditionStyle diamond
+skinparam linetype ortho
+
+title Legacy Leap: E2E Workflow
+
+|Stakeholders/Negocio|
+start
+:Definir KPIs y Objetivos de Negocio;
+
+|Software Engineering|
+:Análisis del Sistema Legado;
+note right: Identificar dominios y dependencias
+
+|AI & Data Team|
+:Análisis de Código con Scripts;
+:Análisis de Esquema de Datos;
+
+|Software Engineering|
+:Crear **Roadmap de Modernización**;
+
+|Stakeholders/Negocio|
+:Aprobar Roadmap y Presupuesto;
+
+if (Roadmap Aprobado?) then (Sí)
+  |DevOps/SRE|
+  :Provisionar Infra en GCP (Base);
+  :Configurar GCP Anthos;
+  :Implementar Strangler Façade (API Gateway);
+  :Crear Pipelines CI/CD Base;
+  
+  repeat
+    
+    |Software Engineering|
+    partition "Ambiente DEV" {
+        :Seleccionar Módulo a Migrar;
+        :Desarrollar Microservicio (Código);
+        :Ejecutar Pruebas Unitarias (Local);
+        :Commit & Push;
+    }
+    
+    |DevOps/SRE|
+    partition "Ambiente TST (QA)" {
+        :CI Build & Deploy a **TST**;
+        |Software Engineering|
+        :Ejecutar Pruebas de Integración;
+        :Ejecutar SonarQube / Security Scan;
+    }
+    
+    |AI & Data Team|
+    partition "Ambiente STAGING (Pre-Prod)" {
+        :Planificar Migración de Datos del Módulo;
+        :Ejecutar Scripts de Migración en **STG**;
+        |DevOps/SRE|
+        :Deploy a **STAGING**;
+        |Stakeholders/Negocio|
+        :Validación Funcional (UAT) en **STG**;
+    }
+
+    |DevOps/SRE|
+    partition "Ambiente PROD" {
+        :Promoción a **PROD**;
+        :Ejecutar Migración de Datos Final;
+        :Despliegue Canary (Tráfico gradual);
+        :Configurar Enrutamiento en Strangler Façade;
+        :Monitorización de Salud (Health Checks);
+    }
+    
+  repeat while (¿Quedan módulos por migrar?) is (Sí)
+  ->no;
+  
+  |DevOps/SRE|
+  partition "Cierre y Optimización" {
+      :Monitorización E2E Final;
+      
+      if (¿Sistema estable?) then (No)
+        :Analizar Logs y Métricas;
+        :Optimizar Recursos / Código;
+        :Re-evaluar estabilidad;
+      endif
+      
+      |Stakeholders/Negocio|
+      :Aprobar Apagado de Legado;
+      
+      |DevOps/SRE|
+      :Decommissioning (Apagar Servers Antiguos);
+      :Archivar Datos Históricos;
+  }
+  
+  |Stakeholders/Negocio|
+  :Proyecto Completado;
+  stop
+
+else (No)
+  :Revisar Alcance;
+  stop
+endif
+@enduml
+
+
+### METODOLOGÍA: CHAIN OF THOUGHT (PASO A PASO) NOTA: sin imprimir nada por pantalla
+1.  **Descompresión del Proyecto:** Analiza la descripción del proyecto y el diagrama de actividades. ¿Cuál es el objetivo principal y la arquitectura subyacente?
+2.  **Mapeo de Actividades a Épicas:** Agrupa las acciones del diagrama en 3 a 7 grandes bloques lógicos (Épicas). Justifica por qué las agrupaste así.
+3.  **Secuenciación y Dependencias:** Define el orden de ejecución. ¿Qué Épica debe terminarse antes de poder iniciar la siguiente? (Esto alimentará el campo 'dependencies').
+4.  **Profundidad Técnica:** Para cada Épica identificada, define brevemente el stack tecnológico, los riesgos críticos y los criterios de aceptación en formato BDD.
+
+### REGLAS ESTRICTAS DE SALIDA
+-   **Formato JSONL:** Cada Épica debe ser un objeto JSON válido y ocupar **UNA SOLA LÍNEA**. Sin saltos de línea internos, sin formateo pretty-print.
+-   **Esquema:** Debes usar exactamente la estructura mostrada en el "TARGET SCHEMA".
+-   **Restricciones de Datos:** `epic_id` debe ser EP-001, EP-002, etc. `priority` solo puede ser "High", "Medium" o "Low". Los campos de listas (`acceptance_criteria`, `dependencies`, `risks`, `success_metrics`) deben ser Arrays de strings.
+
+### TARGET SCHEMA (ESTRUCTURA EXACTA)
+{
+  "input": {
+    "context": "Contexto estratégico y técnico profundo de la épica",
+    "business_requirements": "Necesidades del negocio justificadas detalladamente",
+    "technical_requirements": "Detalles técnicos específicos, stack, arquitectura y tareas de ingeniería",
+    "project_context": "Fase del proyecto, propósito y relación con el diagrama de actividades",
+    "stakeholder_requirements": "Expectativas claras de los interesados/equipos"
+  },
+  "output": {
+    "epic_id": "EP-00X",
+    "title": "Título profesional y conciso",
+    "description": "Resumen ejecutivo claro de la épica",
+    "acceptance_criteria": ["Criterio verificable 1", "Criterio verificable 2"],
+    "priority": "High/Medium/Low",
+    "estimated_effort": "XX-XX hrs",
+    "business_value": "Impacto real y medible en el negocio",
+    "dependencies": ["EP-00X" o vacío si no tiene dependencias],
+    "risks": ["Riesgo identificado 1", "Riesgo identificado 2"],
+    "success_metrics": ["Métrica cuantitativa 1", "Métrica cuantitativa 2"]
+  },
+  "metadata": { 
+    "source_file": "output/generado_sintetico/epics.json", 
+    "type": "epic" 
+  }
+}
+
+### OUTPUT (ONLY JSONL)
+
+NOTA: Se tecnico no hagas Epics grandes y genericas basada en fases de SLDC, crea temas que se realicen como maximo en 80 horas para que esten refinadas.

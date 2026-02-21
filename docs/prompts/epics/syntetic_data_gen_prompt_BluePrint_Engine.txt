@@ -1,0 +1,178 @@
+
+Eres un Arquitecto de Software Senior, Product Manager experto y un Maestro en la Generación de Datos Sintéticos para el Fine-Tuning de LLMs. Tu objetivo es crear un dataset impecable de Épicas (Epics) en formato JSONL, basado estrictamente en los inputs proporcionados.
+
+### INPUTS DEL PROYECTO
+**Descripción del Proyecto/Servicio:**
+Diseño de arquitectura de software
+Blueprint Engine
+Definición de la estructura fundamental del sistema, incluyendo sus componentes, sus relaciones y los principios que guían su diseño y evolución.
+
+**Diagrama de Actividades (PlantUML/Texto):**
+@startuml
+!theme plain
+title
+  <size:18><b>Blueprint Engine</b></size>
+  <size:12>Definición de la estructura fundamental del sistema, incluyendo sus componentes, sus relaciones y los principios que guían su diseño y evolución.</size>
+end title
+skinparam conditionStyle diamond
+skinparam linetype ortho
+
+title Blueprint Engine: E2E MLOps-infused Agile Workflow
+
+|Stakeholders/Arquitectos|
+|Data & AI Team|
+|Software Engineering|
+|DevOps/Infra (CI/CD)|
+|Sistema / GCP|
+
+|Stakeholders/Arquitectos|
+start
+:Definir Requisitos del Blueprint\ny Criterios de Éxito (KPIs);
+note right
+  - ¿Qué debe generar el motor?
+  - ¿Cómo se mide un "buen" blueprint?
+end note
+
+|Software Engineering|
+:Diseñar Arquitectura del Engine;
+note left
+  - Estructura con Spring Modulith
+  - Documentar con PlantUML
+end note
+:Diseñar DSL de entrada de requisitos;
+note right
+  **¿Qué es un DSL?**
+  (Domain-Specific Language)
+  Es un lenguaje o formato especializado
+  (ej. YAML, JSON o sintaxis propia)
+  que actúa como contrato estandarizado
+  para declarar los requisitos que el
+  Engine debe interpretar y construir.
+end note
+
+|Data & AI Team|
+:Diseñar Arquitectura del Modelo AI;
+:Recopilar y Curar Datos;
+note right
+  - Patrones de diseño
+  - Documentación de GCP Framework
+  - Blueprints existentes
+end note
+:Entrenar y Validar Modelo v1;
+note right: Herramienta: GCP Vertex AI Training
+:Registrar Modelo v1 en Registry;
+note right: Herramienta: GCP Vertex AI Model Registry
+
+|Software Engineering|
+:Desarrollar Módulos del Engine\n(Parser, Validador, Renderer);
+note left: Stack: Java (Spring Modulith)
+:Integrar con el Modelo de AI;
+
+|DevOps/Infra (CI/CD)|
+:Crear Pipeline de CI;
+note right
+  - Compilación y Pruebas Unitarias
+  - Análisis de Código Estático
+  - Construcción de Contenedor
+  - Herramienta: GCP Cloud Build
+end note
+:Push de Artefacto a Registry;
+|Sistema / GCP|
+:Artifact Registry;
+
+|DevOps/Infra (CI/CD)|
+:Crear Pipeline de CD;
+note right
+  - Despliegue en Entorno de Staging
+  - Herramienta: GCP Cloud Deploy
+end note
+:Desplegar App y Modelo v1\nen Staging;
+|Sistema / GCP|
+:GCP Cloud Run (App Staging);
+:GCP Vertex AI Endpoint (Modelo Staging);
+
+|Stakeholders/Arquitectos|
+:Validación de Blueprints Generados\n(Human-in-the-loop);
+if (¿Calidad Aceptable?) then (Sí)
+  |DevOps/Infra (CI/CD)|
+  :Aprobar Despliegue a Producción;
+  :Desplegar App y Modelo v1\nen Producción;
+  |Sistema / GCP|
+  :GCP Cloud Run (App Prod);
+  :GCP Vertex AI Endpoint (Modelo Prod);
+
+  |Software Engineering|
+  :Monitorizar Salud de la Aplicación;
+  note left
+    - Logs, Métricas, Traces
+    - Herramienta: GCP Operations Suite
+  end note
+
+  |Data & AI Team|
+  :Monitorizar Rendimiento del Modelo;
+  note right
+    - Latencia, Predicciones, Drift
+    - Herramienta: Vertex AI Model Monitoring
+  end note
+
+  |Stakeholders/Arquitectos|
+  :Usar el Servicio y Proveer Feedback;
+
+  |Data & AI Team|
+  :Recolectar Feedback y Nuevos Datos;
+  :Re-entrenar Modelo (v2);
+  -> Repetir ciclo de CI/CD;
+
+else (No)
+  |Data & AI Team|
+  :Ajustar Hiperparámetros\no Recopilar más Datos;
+  :Re-entrenar Modelo;
+  --> "Registrar Modelo v1 en Registry";
+endif
+
+|Sistema / GCP|
+stop
+@enduml
+
+
+### METODOLOGÍA: CHAIN OF THOUGHT (PASO A PASO) NOTA: sin imprimir nada por pantalla
+1.  **Descompresión del Proyecto:** Analiza la descripción del proyecto y el diagrama de actividades. ¿Cuál es el objetivo principal y la arquitectura subyacente?
+2.  **Mapeo de Actividades a Épicas:** Agrupa las acciones del diagrama en 3 a 7 grandes bloques lógicos (Épicas). Justifica por qué las agrupaste así.
+3.  **Secuenciación y Dependencias:** Define el orden de ejecución. ¿Qué Épica debe terminarse antes de poder iniciar la siguiente? (Esto alimentará el campo 'dependencies').
+4.  **Profundidad Técnica:** Para cada Épica identificada, define brevemente el stack tecnológico, los riesgos críticos y los criterios de aceptación en formato BDD.
+
+### REGLAS ESTRICTAS DE SALIDA
+-   **Formato JSONL:** Cada Épica debe ser un objeto JSON válido y ocupar **UNA SOLA LÍNEA**. Sin saltos de línea internos, sin formateo pretty-print.
+-   **Esquema:** Debes usar exactamente la estructura mostrada en el "TARGET SCHEMA".
+-   **Restricciones de Datos:** `epic_id` debe ser EP-001, EP-002, etc. `priority` solo puede ser "High", "Medium" o "Low". Los campos de listas (`acceptance_criteria`, `dependencies`, `risks`, `success_metrics`) deben ser Arrays de strings.
+
+### TARGET SCHEMA (ESTRUCTURA EXACTA)
+{
+  "input": {
+    "context": "Contexto estratégico y técnico profundo de la épica",
+    "business_requirements": "Necesidades del negocio justificadas detalladamente",
+    "technical_requirements": "Detalles técnicos específicos, stack, arquitectura y tareas de ingeniería",
+    "project_context": "Fase del proyecto, propósito y relación con el diagrama de actividades",
+    "stakeholder_requirements": "Expectativas claras de los interesados/equipos"
+  },
+  "output": {
+    "epic_id": "EP-00X",
+    "title": "Título profesional y conciso",
+    "description": "Resumen ejecutivo claro de la épica",
+    "acceptance_criteria": ["Criterio verificable 1", "Criterio verificable 2"],
+    "priority": "High/Medium/Low",
+    "estimated_effort": "XX-XX hrs",
+    "business_value": "Impacto real y medible en el negocio",
+    "dependencies": ["EP-00X" o vacío si no tiene dependencias],
+    "risks": ["Riesgo identificado 1", "Riesgo identificado 2"],
+    "success_metrics": ["Métrica cuantitativa 1", "Métrica cuantitativa 2"]
+  },
+  "metadata": { 
+    "source_file": "output/generado_sintetico/epics.json", 
+    "type": "epic" 
+  }
+}
+
+### OUTPUT (ONLY JSONL)
+
+NOTA: Se tecnico no hagas Epics grandes y genericas basada en fases de SLDC, crea temas que se realicen como maximo en 80 horas para que esten refinadas.

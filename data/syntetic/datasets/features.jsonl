@@ -1,0 +1,862 @@
+  {
+    "input": {
+      "context": "El proyecto inicia desde cero, sin ningún tipo de infraestructura en la nube. Es imperativo establecer una base sólida, repetible y segura que permita el despliegue y la operación de todos los componentes subsecuentes de la plataforma. La adopción de Infraestructura como Código (IaC) es un mandato técnico para garantizar la consistencia y la auditabilidad de los entornos.",
+      "business_requirements": "Establecer una base tecnológica que permita un aprovisionamiento rápido y consistente de entornos (desarrollo, staging, producción) para acelerar el time-to-market de nuevas funcionalidades. Se requiere minimizar los errores humanos en la configuración de infraestructura y garantizar que el entorno de producción sea un reflejo exacto de los entornos de prueba.",
+      "technical_requirements": "La infraestructura debe desplegarse en un proveedor de nube pública (ej. AWS, GCP, Azure) utilizando Terraform. El código fuente de Terraform debe residir en un repositorio de Git con una estrategia de ramas definida. El clúster de Kubernetes debe ser una oferta gestionada por el proveedor (ej. EKS, GKE, AKS) para reducir la sobrecarga operativa. Las VPC, subredes y grupos de seguridad deben diseñarse siguiendo las mejores prácticas de aislamiento de red.",
+      "project_context": "Esta épica es la base de todo el proyecto. Sin una red y un clúster de Kubernetes estables y gestionados con IaC, ninguna de las épicas posteriores (observabilidad, seguridad, servicios de negocio) puede ser implementada de manera confiable. Su éxito es el habilitador crítico para el resto del plan de proyecto.",
+      "stakeholder_requirements": "El equipo de plataforma/infraestructura necesita tener un control total y versionado sobre la configuración de la red y el clúster. La dirección de tecnología requiere que la infraestructura sea desechable y reproducible bajo demanda para control de costos y recuperación ante desastres."
+    },
+    "output": {
+      "epic_id": "EP-001",
+      "title": "Fundamentos de Red y Clúster K8s con IaC",
+      "description": "Establecer la infraestructura de red segura y desplegar un clúster de Kubernetes gestionado mínimo viable utilizando Infraestructura como Código (Terraform). Esta épica crea la base indispensable sobre la cual se construirán todos los demás componentes de la plataforma.",
+      "acceptance_criteria": [
+        "La infraestructura de red (VPC, subredes públicas/privadas, security groups, tablas de ruteo) está definida y gestionada al 100% con código Terraform versionado.",
+        "Un clúster de Kubernetes gestionado es desplegado exitosamente en la red definida, con su configuración (versión, tamaño de nodos) gestionada por Terraform.",
+        "El acceso al clúster a través de `kubectl` está configurado de forma segura para el equipo de plataforma, siguiendo el principio de mínimo privilegio."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-90 hrs",
+      "business_value": "Acelera drásticamente el tiempo de aprovisionamiento de entornos, reduce el riesgo de errores manuales y establece un estándar de infraestructura automatizada y repetible, sentando las bases para la entrega continua y la escalabilidad del producto.",
+      "dependencies": [],
+      "risks": [
+        "La complejidad en la configuración de red y políticas de seguridad del proveedor de la nube puede ser mayor a la esperada, requiriendo investigación adicional.",
+        "La curva de aprendizaje del equipo con los módulos de Terraform específicos del proveedor de la nube puede impactar la estimación inicial.",
+        "Costos no controlados del proveedor de la nube si el dimensionamiento inicial de los nodos del clúster es incorrecto."
+      ],
+      "success_metrics": [
+        "Tiempo de aprovisionamiento de un nuevo clúster base < 1 hora.",
+        "Cobertura de IaC para la infraestructura de red y clúster del 100%.",
+        "Disponibilidad de las APIs del clúster de Kubernetes > 99.9%."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que el clúster de Kubernetes está operativo, el siguiente paso crítico es ganar visibilidad sobre su estado y rendimiento. Sin métricas y dashboards, el equipo opera a ciegas, incapaz de detectar problemas de capacidad, rendimiento o disponibilidad de manera proactiva.",
+      "business_requirements": "Se requiere garantizar la estabilidad y el rendimiento de la plataforma desde el primer día. La capacidad de monitorizar el sistema es fundamental para cumplir con los Acuerdos de Nivel de Servicio (SLAs) internos y externos. La información de monitoreo debe ser accesible para los equipos de operaciones y desarrollo para facilitar la resolución de incidentes.",
+      "technical_requirements": "El stack de observabilidad debe desplegarse dentro del clúster de Kubernetes. Debe ser capaz de auto-descubrir métricas de nuevos servicios y nodos. Se deben configurar alertas básicas para condiciones críticas (ej. nodo no disponible, uso de disco elevado). Los dashboards deben ser exportables y versionables para garantizar la consistencia entre entornos.",
+      "project_context": "Esta épica se ejecuta inmediatamente después de la EP-001 para dotar de visibilidad al equipo mientras se construyen los componentes de negocio. Proporciona la base para la toma de decisiones operativas y el dimensionamiento correcto del clúster.",
+      "stakeholder_requirements": "El equipo de operaciones necesita dashboards claros que muestren la salud general del sistema de un vistazo. La dirección de producto necesita métricas de disponibilidad para reportar el estado del servicio. Los desarrolladores necesitan acceso a métricas de sus aplicaciones para depurar problemas de rendimiento."
+    },
+    "output": {
+      "epic_id": "EP-002",
+      "title": "Plataforma de Observabilidad Core",
+      "description": "Desplegar y configurar un stack de observabilidad basado en Prometheus y Grafana sobre el clúster de Kubernetes para obtener visibilidad crítica sobre la salud y el rendimiento de la plataforma y las aplicaciones futuras.",
+      "acceptance_criteria": [
+        "El stack de Prometheus y Grafana está desplegado en el clúster de Kubernetes a través de un método gestionado (e.g., Helm Chart).",
+        "Se recolectan y almacenan métricas clave del clúster (CPU, memoria, estado de nodos, uso de disco) y son visibles en Grafana.",
+        "Se ha configurado al menos un dashboard en Grafana que muestra el estado general de salud del clúster, permitiendo una visualización rápida del estado del sistema."
+      ],
+      "priority": "High",
+      "estimated_effort": "30-40 hrs",
+      "business_value": "Proporciona la visibilidad necesaria para operar la plataforma de manera confiable, permitiendo la detección proactiva de problemas, reduciendo el tiempo medio de resolución (MTTR) y facilitando la toma de decisiones basada en datos sobre el rendimiento.",
+      "dependencies": [
+        "EP-001: Fundamentos de Red y Clúster K8s con IaC"
+      ],
+      "risks": [
+        "La configuración de los `ServiceMonitors` de Prometheus para descubrir servicios de forma automática puede requerir ajustes específicos.",
+        "El consumo de recursos del stack de observabilidad puede impactar el dimensionamiento y los costos del clúster si no se gestiona adecuadamente."
+      ],
+      "success_metrics": [
+        "Tiempo para visualizar métricas de un nuevo nodo en Grafana < 5 minutos.",
+        "Disponibilidad de los dashboards de Grafana > 99.9%.",
+        "El 100% de los nodos del clúster reportan métricas a Prometheus."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con la visibilidad de la plataforma asegurada, el foco se desplaza a la seguridad. El clúster de Kubernetes, por defecto, no tiene una configuración de seguridad robusta aplicada. Es necesario implementar controles de acceso y una gestión segura de secretos para proteger la plataforma y los datos de las futuras aplicaciones.",
+      "business_requirements": "La plataforma debe cumplir con las políticas de seguridad de la información de la compañía desde su concepción. Se deben proteger las credenciales y claves de acceso, garantizando que nunca se almacenen en texto plano. El acceso a los recursos del clúster debe estar restringido según el rol de cada usuario o sistema.",
+      "technical_requirements": "Se debe habilitar y configurar el cifrado de secretos en etcd a nivel de proveedor de nube. Se deben crear y aplicar Roles y RoleBindings de RBAC para al menos tres perfiles: administrador de plataforma, desarrollador (solo lectura en namespaces específicos) y servicio de CI/CD (capacidad de editar/desplegar en namespaces específicos).",
+      "project_context": "Esta épica de 'hardening' de seguridad es fundamental antes de que los servicios de negocio comiencen a desplegarse y manejar datos potencialmente sensibles. Establece el perímetro de seguridad interno del clúster.",
+      "stakeholder_requirements": "El CISO/equipo de seguridad requiere evidencia de que los secretos están cifrados y el acceso está controlado. Los desarrolladores necesitan un proceso claro y seguro para consumir secretos sin necesidad de conocerlos. El equipo de plataforma necesita poder auditar el acceso y los permisos."
+    },
+    "output": {
+      "epic_id": "EP-003",
+      "title": "Hardening de Seguridad y Gestión de Secretos",
+      "description": "Implementar las capacidades fundamentales de seguridad en el clúster, incluyendo una solución robusta para la gestión de secretos y la configuración inicial de políticas de control de acceso basado en roles (RBAC).",
+      "acceptance_criteria": [
+        "Se ha implementado una solución para la gestión de secretos (e.g., Kubernetes Secrets con encriptación en reposo habilitada a nivel de proveedor de nube).",
+        "Se ha creado un secreto de prueba y se ha verificado que una aplicación de ejemplo puede consumirlo de forma segura como variable de entorno o volumen montado.",
+        "Se han definido y aplicado roles RBAC iniciales para limitar el acceso a namespaces específicos (e.g., un rol de `view` para desarrolladores y un rol de `edit` para CI/CD)."
+      ],
+      "priority": "High",
+      "estimated_effort": "30-50 hrs",
+      "business_value": "Mitiga riesgos de seguridad al proteger información sensible (credenciales, claves API) y aplicar el principio de mínimo privilegio. Fortalece la postura de seguridad de la plataforma y cumple con las mejores prácticas de la industria.",
+      "dependencies": [
+        "EP-001: Fundamentos de Red y Clúster K8s con IaC"
+      ],
+      "risks": [
+        "La configuración incorrecta de permisos IAM/RBAC es compleja y puede bloquear funcionalidades legítimas o, peor aún, crear brechas de seguridad.",
+        "La rotación de secretos no está incluida en esta épica y deberá ser abordada en el futuro, lo que constituye un riesgo residual."
+      ],
+      "success_metrics": [
+        "Cero secretos almacenados en texto plano en los repositorios de código Git.",
+        "Una auditoría de acceso al clúster demuestra que los roles RBAC se están aplicando correctamente.",
+        "El 100% de las credenciales de infraestructura son gestionadas a través de la solución de secretos."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que la plataforma tiene una configuración de seguridad básica, es crucial proteger el trabajo ya realizado y los datos que se generarán. La ausencia de un plan de backup y restore supone un riesgo inaceptable para la continuidad del negocio, ya que un fallo catastrófico podría significar la pérdida total de la configuración de la plataforma.",
+      "business_requirements": "El negocio exige que la plataforma sea resiliente y recuperable ante desastres. Se debe minimizar la pérdida de datos (RPO) y el tiempo de inactividad (RTO) en caso de fallo. Los backups deben almacenarse de forma segura, fuera del clúster principal, y su integridad debe ser verificada periódicamente.",
+      "technical_requirements": "Se debe instalar y configurar una herramienta como Velero. Los backups deben programarse automáticamente y almacenarse en un bucket de almacenamiento externo al clúster (ej. S3). El proceso de restauración debe estar documentado y probado al menos una vez en un entorno de no producción. La herramienta debe ser capaz de backup de recursos de Kubernetes y volúmenes persistentes.",
+      "project_context": "Esta épica establece la estrategia de recuperación ante desastres. Aunque se ejecuta en paralelo con las épicas de negocio, debe completarse antes de que el pipeline de procesamiento de datos maneje un volumen significativo de información crítica.",
+      "stakeholder_requirements": "La dirección del producto y los responsables de cumplimiento normativo necesitan garantías de que los datos del sistema pueden ser recuperados. El equipo de operaciones necesita un procedimiento automatizado y fiable para restaurar el servicio."
+    },
+    "output": {
+      "epic_id": "EP-004",
+      "title": "Plan de Continuidad de Negocio (Backup y Restore)",
+      "description": "Establecer y validar un proceso automatizado de backup y restauración para el estado del clúster de Kubernetes y los datos de las aplicaciones, asegurando la capacidad de recuperación ante desastres o fallos críticos.",
+      "acceptance_criteria": [
+        "La herramienta de backup (e.g., Velero) está desplegada y configurada para realizar backups programados de los recursos del clúster a un almacenamiento externo seguro.",
+        "Se ha ejecutado exitosamente un backup completo de una aplicación de prueba, incluyendo sus manifiestos, configuraciones y volúmenes persistentes.",
+        "Se ha verificado un ciclo completo de restauración: la aplicación de prueba es eliminada del clúster y restaurada exitosamente a su estado funcional anterior a partir del backup."
+      ],
+      "priority": "High",
+      "estimated_effort": "40-60 hrs",
+      "business_value": "Garantiza la resiliencia de la plataforma y la continuidad del negocio, minimizando la pérdida de datos (RPO) y el tiempo de inactividad (RTO) en caso de un incidente grave. Aumenta la confianza de los stakeholders y clientes en la robustez del producto.",
+      "dependencies": [
+        "EP-001: Fundamentos de Red y Clúster K8s con IaC"
+      ],
+      "risks": [
+        "La configuración de permisos para que la herramienta de backup acceda al almacenamiento externo y a las APIs del proveedor de la nube es compleja y propensa a errores.",
+        "Las restauraciones de volúmenes persistentes (PVs) pueden fallar si los drivers de almacenamiento (CSI) no son compatibles o no están configurados correctamente."
+      ],
+      "success_metrics": [
+        "Tasa de éxito de los jobs de backup programados > 99%.",
+        "Recovery Time Objective (RTO) verificado para una aplicación de prueba < 4 horas.",
+        "Recovery Point Objective (RPO) verificado y alineado con la frecuencia de los backups (e.g., backups diarios)."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Antes de invertir en el desarrollo de un servicio de clasificación de PDFs, existe una incertidumbre técnica sobre si se puede alcanzar la precisión requerida por el negocio. Se necesita un Spike de viabilidad para explorar diferentes enfoques, medir su precisión con datos reales y de-riesgar la implementación, asegurando que el esfuerzo de desarrollo esté justificado.",
+      "business_requirements": "El negocio necesita clasificar documentos de forma automática y fiable para enrutarlos correctamente. Enviar un documento escaneado a un proceso de extracción de texto nativo resulta en una pésima experiencia de usuario y datos incorrectos. El objetivo de negocio es alcanzar una precisión lo suficientemente alta para automatizar esta decisión sin intervención humana.",
+      "technical_requirements": "El Spike debe implementar una o varias heurísticas de clasificación (ej. ratio de texto extraíble por página, detección de imágenes). Se requiere crear un conjunto de datos de prueba representativo y etiquetado. El entregable principal es un informe que cuantifique la precisión de la(s) heurística(s) y detalle los casos de error más comunes.",
+      "project_context": "Este Spike es un prerrequisito para la EP-004 (Implementación del Servicio Clasificador). Su resultado determinará si se procede con la implementación, se requiere un enfoque más complejo (como un modelo de ML) o se asume un riesgo con una precisión menor.",
+      "stakeholder_requirements": "El Product Manager necesita datos concretos para decidir si la funcionalidad es viable dentro de los plazos y presupuesto del proyecto. El equipo de ingeniería necesita entender la complejidad técnica real antes de comprometerse con una estimación para la EP-004."
+    },
+    "output": {
+      "epic_id": "EP-005",
+      "title": "Spike de Viabilidad: Clasificador de Tipo de PDF",
+      "description": "Realizar una investigación técnica acotada (Spike) para determinar la viabilidad de alcanzar una precisión del 98% en la clasificación de PDFs como 'nativo' o 'escaneado'. Esta épica se enfoca en de-riesgar la implementación, proveyendo datos concretos para tomar una decisión informada sobre el esfuerzo vs. el valor de negocio.",
+      "acceptance_criteria": [
+        "Se crea y etiqueta manualmente un set de validación de 500 documentos mixtos, representativo de los casos de uso reales, y se almacena en un repositorio versionado.",
+        "Se implementa una heurística de clasificación base (ej. iterar por páginas y medir la cantidad de texto extraíble) y se ejecuta contra el set de validación.",
+        "Se entrega un informe de viabilidad que detalla: 1) La precisión alcanzada por la heurística base, 2) Los 3 patrones de error más comunes, y 3) Una estimación de esfuerzo refinada para solucionar dichos patrones y alcanzar el 98%."
+      ],
+      "priority": "High",
+      "estimated_effort": "30-40 hrs",
+      "business_value": "Mitiga el riesgo de una inversión de desarrollo significativa con un resultado incierto. Permite tomar decisiones de producto basadas en datos técnicos reales, alineando las expectativas de negocio con la viabilidad de la implementación y evitando sobrecostos o retrasos.",
+      "dependencies": [
+        "EP-001: Fundamentos de Red y Clúster K8s con IaC"
+      ],
+      "risks": [
+        "El set de validación creado podría no ser completamente representativo de la distribución de documentos en producción.",
+        "La complejidad para analizar los patrones de error podría ser mayor de la esperada, consumiendo más tiempo de investigación."
+      ],
+      "success_metrics": [
+        "Entrega del informe de viabilidad dentro del tiempo estimado.",
+        "Decisión de producto (Aceptar precisión actual, Invertir más esfuerzo, o Pivotar) tomada formalmente basada en los hallazgos del informe."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Basado en los hallazgos del Spike de viabilidad, se procede a implementar el servicio de clasificación de PDFs en producción. El objetivo es crear un servicio interno, robusto y de baja latencia que actúe como el primer filtro en el pipeline de procesamiento de documentos, determinando la ruta que seguirá cada documento.",
+      "business_requirements": "Se requiere una solución de software que clasifique documentos en tiempo real con la precisión acordada tras el spike. La solución debe ser lo suficientemente rápida como para no convertirse en un cuello de botella en el pipeline. El resultado de la clasificación debe ser claro y utilizable por los sistemas posteriores.",
+      "technical_requirements": "El servicio debe exponer una API RESTful. Debe implementar la heurística optimizada identificada en el spike. El 'score de confianza' debe ser un campo obligatorio en la respuesta. El servicio debe ser desplegable en Kubernetes y consumir recursos de forma eficiente. Debe incluir un manejo de errores robusto para archivos PDF corruptos o mal formados.",
+      "project_context": "Este servicio es el primer componente de lógica de negocio que se integra en la plataforma. Depende directamente de la plataforma base y de los resultados de su propio spike de viabilidad. Su correcto funcionamiento es crítico para el rendimiento y la eficiencia del pipeline de extracción.",
+      "stakeholder_requirements": "Los equipos de downstream (el pipeline de extracción) necesitan una API fiable y de baja latencia. El equipo de operaciones necesita poder monitorizar su rendimiento y tasas de error. El negocio necesita una clasificación precisa para optimizar el uso de recursos (evitando OCR innecesario)."
+    },
+    "output": {
+      "epic_id": "EP-006",
+      "title": "Implementación del Servicio Clasificador de PDF (Nativo vs. Escaneado)",
+      "description": "Desarrollar e implementar un servicio robusto que analiza un documento PDF y lo clasifica como 'nativo' o 'escaneado'. La implementación se basará en los hallazgos y la decisión tomada en la épica de viabilidad para asegurar el cumplimiento de un objetivo de precisión realista y acordado.",
+      "acceptance_criteria": [
+        "El servicio clasifica correctamente los documentos con una precisión igual o superior al objetivo definido tras el Spike de Viabilidad.",
+        "Se define e implementa un algoritmo para el 'score de confianza' que considera, como mínimo, la proporción de páginas con texto extraíble versus el total de páginas y la cantidad de texto detectado.",
+        "La API del servicio expone un endpoint que acepta un PDF y devuelve un JSON claro, incluyendo la clasificación ('nativo', 'escaneado', 'requiere_revision') y el score de confianza.",
+        "La latencia p95 del servicio de clasificación es inferior a 750ms por documento de hasta 20 páginas."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-80 hrs",
+      "business_value": "Habilita el enrutamiento inteligente de documentos, reduciendo drásticamente los costos operativos al evitar el uso innecesario de servicios de OCR en documentos nativos. Mejora la velocidad de procesamiento general del pipeline de documentos.",
+      "dependencies": [
+        "EP-005: Spike de Viabilidad: Clasificador de Tipo de PDF"
+      ],
+      "risks": [
+        "El rendimiento de las librerías de análisis de PDF puede ser un cuello de botella, requiriendo optimización para cumplir los objetivos de latencia.",
+        "La distribución de documentos en producción puede variar con el tiempo, requiriendo un ajuste futuro de la heurística de clasificación."
+      ],
+      "success_metrics": [
+        "Tasa de Falsos Positivos (documentos nativos clasificados como escaneados) en producción < 1%.",
+        "Disponibilidad del servicio de clasificación > 99.9%.",
+        "El 100% de los documentos que ingresan al pipeline son procesados por el servicio de clasificación."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "La extracción de datos mediante un LLM (Large Language Model) es la funcionalidad principal del producto, pero también la de mayor riesgo técnico. Existe incertidumbre sobre la precisión, el costo y la latencia del modelo Llama 3.1 al procesar los tipos de documentos específicos del negocio. Este Spike es el paso más crítico para validar la viabilidad del MVP.",
+      "business_requirements": "El núcleo de la propuesta de valor del producto es la automatización de la extracción de datos. El negocio necesita saber, con datos reales, si esta tecnología puede alcanzar un nivel de precisión y costo que haga el producto viable y rentable. Se necesita una respuesta clara de 'Go/No-Go'.",
+      "technical_requirements": "Se debe crear un 'Golden Dataset' de documentos reales anonimizados con sus extracciones 'ideales' (ground truth) creadas manualmente. Se debe probar el LLM con diferentes estrategias de prompting y parámetros. El informe final debe incluir métricas de precisión (ej. precisión, recall, F1-score a nivel de campo), costo por documento en USD y latencia P95.",
+      "project_context": "Este Spike es el habilitador para la EP-007 (MVP del Pipeline de Extracción). Su resultado definirá la arquitectura, el presupuesto operativo y las expectativas de rendimiento del producto principal. Es la decisión de mayor impacto en el proyecto.",
+      "stakeholder_requirements": "La dirección de la empresa necesita una validación de que la tecnología elegida (LLM) es la correcta y que el modelo de negocio (costos vs. valor) es sostenible. El equipo de producto necesita métricas realistas para fijar los OKRs del MVP. El equipo de ingeniería necesita la estrategia de prompt y las configuraciones óptimas para construir el servicio."
+    },
+    "output": {
+      "epic_id": "EP-007",
+      "title": "Spike de Viabilidad: Extracción de Datos con LLM",
+      "description": "Realizar una investigación técnica acotada (Spike) para de-riesgar el uso de un LLM (Llama 3.1) en la extracción de datos. El objetivo es establecer líneas base concretas y realistas de precisión, costo y latencia para tomar una decisión informada sobre la viabilidad de la implementación del MVP.",
+      "acceptance_criteria": [
+        "Se crea y versiona un 'Golden Dataset' de 50-100 documentos representativos (mezclando nativos y escaneados) con sus correspondientes JSON de 'verdad absoluta' (ground truth) anotados manualmente.",
+        "Se entrega un informe de viabilidad que documenta: 1) La precisión de extracción medida automáticamente contra el 'Golden Dataset' para al menos 3 estrategias de prompt, 2) El costo por documento, y 3) La latencia observada.",
+        "El informe de viabilidad incluye una comparación cuantitativa de la degradación de la precisión del LLM al procesar texto de PDFs nativos versus texto proveniente de OCR, usando el 'Golden Dataset'.",
+        "Basado en los hallazgos, se establece y aprueba formalmente una línea base informada y realista para las métricas objetivo del MVP (precisión, costo, latencia)."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-80 hrs",
+      "business_value": "Mitiga el riesgo de una inversión de desarrollo significativa en una tecnología con incertidumbre inherente. Permite tomar una decisión de producto go/no-go basada en datos técnicos reales, alineando las expectativas de negocio con la viabilidad de la implementación.",
+      "dependencies": [
+        "EP-001: Fundamentos de Red y Clúster K8s con IaC"
+      ],
+      "risks": [
+        "Los hallazgos pueden revelar que la precisión o el costo son inviables para el negocio, requiriendo un pivote tecnológico o estratégico.",
+        "El 'Golden Dataset' podría no ser 100% representativo de la distribución de documentos en producción, afectando la generalización de los resultados."
+      ],
+      "success_metrics": [
+        "Entrega del informe de viabilidad completo dentro del tiempo estimado.",
+        "Decisión de producto formal (Go/No-Go/Pivot) para la implementación del MVP, tomada basándose en los datos del informe."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Los registros EP-006 y EP-007 describen la implementación del servicio de extracción. En esta secuencia lógica, EP-006 (Implementación del Servicio de Extracción de Datos con LLM) parece referirse a una versión más simple o un componente interno, mientras que EP-007 (MVP: Pipeline Asíncrono...) describe la implementación completa y operacionalizada. Para mantener la coherencia con la numeración y descripciones proporcionadas, se tratarán como dos épicas distintas pero relacionadas, asumiendo que EP-006 es la creación del 'core' del servicio de extracción (la lógica de llamada al LLM y validación de esquema) y EP-007 es la integración de ese core en un pipeline asíncrono de producción.",
+      "business_requirements": "Se necesita un componente de software reutilizable que encapsule la lógica de interacción con el LLM (Llama 3.1). Este componente debe ser capaz de tomar un texto (de un PDF nativo o de un OCR), aplicar las estrategias de prompt definidas en el spike, y devolver un JSON estructurado y validado.",
+      "technical_requirements": "El servicio debe implementarse como una librería o un microservicio interno. Debe utilizar un esquema JSON versionado para validar la salida del LLM de forma estricta. Debe incluir manejo de errores para alucinaciones y fallos de formato, implementando reintentos o lógica de corrección. La comunicación con la API del LLM (RunPod) debe ser eficiente.",
+      "project_context": "Esta épica sienta las bases técnicas para el pipeline asíncrono. Se centra en la lógica de negocio de la extracción y la calidad de los datos, no en la orquestación o la resiliencia a gran escala. Depende de los resultados de EP-005.",
+      "stakeholder_requirements": "Los científicos de datos/ingenieros de ML necesitan un componente que encapsule el modelo y permita iterar fácilmente sobre prompts y estrategias. El equipo de backend que desarrolla el pipeline que necesita una interfaz limpia y fiable para integrar la funcionalidad de extracción."
+    },
+    "output": {
+      "epic_id": "EP-006",
+      "title": "Implementación del Servicio de Extracción de Datos con LLM",
+      "description": "Desarrollar, desplegar y operacionalizar el servicio de extracción de datos basado en LLM (Llama 3.1), aplicando las estrategias de prompt optimizadas y los parámetros de configuración definidos durante el Spike de Viabilidad.",
+      "acceptance_criteria": [
+        "El servicio de extracción procesa documentos y devuelve el esquema JSON objetivo con una precisión acorde a la línea base establecida en EP-007.",
+        "Se implementa un mecanismo de validación de esquema (ej. Pydantic) que garantiza que la salida del LLM cumple estrictamente con el formato JSON esperado.",
+        "El servicio maneja errores de alucinación o formato inválido implementando reintentos automáticos o mecanismos de fallback.",
+        "La latencia promedio de extracción se mantiene dentro de los márgenes aceptables definidos en el Spike."
+      ],
+      "priority": "High",
+      "estimated_effort": "80-120 hrs",
+      "business_value": "Automatiza la extracción de información estructurada compleja desde documentos no estructurados, reduciendo drásticamente la necesidad de entrada manual de datos y acelerando el procesamiento de información crítica para el negocio.",
+      "dependencies": [
+        "EP-007: Spike de Viabilidad: Extracción de Datos con LLM"
+      ],
+      "risks": [
+        {
+          "risk": "La variabilidad inherente del LLM puede causar inconsistencias ocasionales en la salida estructurada.",
+          "mitigation": "Implementar técnicas de 'Guided Generation' (ej. JSON mode, gramáticas) para restringir la salida del modelo."
+        },
+        {
+          "risk": "El costo de inferencia puede escalar linealmente con el volumen de documentos.",
+          "mitigation": "Optimizar la longitud del contexto (prompts) y evaluar el uso de modelos cuantizados o destilados para reducir costos sin sacrificar demasiada precisión."
+        }
+      ],
+      "success_metrics": [
+        "Porcentaje de documentos procesados exitosamente sin intervención humana > 90% (o según benchmark).",
+        "Reducción del tiempo de procesamiento manual de datos en un X%.",
+        "Estabilidad del servicio con una tasa de error técnico < 1%."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con el componente de extracción desarrollado, es necesario integrarlo en un sistema de producción robusto y escalable. El pipeline debe ser asíncrono para manejar grandes volúmenes de documentos de manera eficiente, resiliente a fallos de servicios externos (como RunPod), y capaz de manejar lotes de documentos para optimizar el costo y rendimiento del LLM.",
+      "business_requirements": "El MVP del producto debe ser capaz de procesar documentos en segundo plano sin bloquear la experiencia del usuario. El sistema debe ser tolerante a fallos y garantizar que ningún documento se pierda. Debe poder manejar picos de carga de manera predecible. El costo operativo debe mantenerse dentro de los límites establecidos en el spike.",
+      "technical_requirements": "Se implementará un sistema basado en colas (ej. RabbitMQ, Kafka o SQS). Un worker consumirá de la cola, agrupará documentos en lotes (batching) y llamará al servicio de extracción. Se debe implementar una Dead Letter Queue (DLQ) para documentos que fallen permanentemente. Las políticas de reintento deben ser configurables. El sistema debe desplegarse en Kubernetes.",
+      "project_context": "Esta épica es la culminación de todos los esfuerzos previos relacionados con la extracción. Construye el sistema de producción real que manejará los datos de los clientes. Es la épica de mayor esfuerzo y valor en la categoría de servicios de negocio.",
+      "stakeholder_requirements": "El equipo de operaciones necesita un sistema observable y gestionable. El producto necesita un pipeline fiable que cumpla con los SLAs de procesamiento. La dirección financiera necesita que los costos operativos estén controlados y sean predecibles, tal como se definió en el spike."
+    },
+    "output": {
+      "epic_id": "EP-008",
+      "title": "MVP: Pipeline Asíncrono de Extracción de Datos con LLM",
+      "description": "Desarrollar e implementar un servicio asíncrono y robusto que procesa documentos en lotes para extraer datos estructurados utilizando un LLM (Llama 3.1). La implementación se basará en las métricas y estrategias validadas en la épica de viabilidad.",
+      "acceptance_criteria": [
+        "Un worker de background consume documentos de una cola, los agrupa en lotes y los procesa según la estrategia definida en la épica de viabilidad.",
+        "El sistema interactúa con la API del LLM (RunPod) de forma resiliente, implementando una política de reintentos con backoff exponencial para manejar fallos transitorios.",
+        "La salida JSON del LLM es validada estrictamente contra un esquema JSON Schema versionado en el repositorio de código. Un fallo de validación se trata como un fallo de procesamiento.",
+        "Los documentos que fallan el procesamiento de forma permanente (tras reintentos o por fallo de validación) son enrutados a una cola de 'letra muerta' (dead-letter queue) para revisión manual, garantizando cero pérdida de datos."
+      ],
+      "priority": "High",
+      "estimated_effort": "100-160 hrs",
+      "business_value": "Entrega la primera versión funcional del motor de extracción de datos, el núcleo de la propuesta de valor del producto. Automatiza la transformación de datos no estructurados, sentando las bases para reducir drásticamente la entrada de datos manual.",
+      "dependencies": [
+        "EP-007: Spike de Viabilidad: Extracción de Datos con LLM"
+      ],
+      "risks": [
+        "La dependencia de un servicio externo (RunPod) introduce riesgos de latencia, disponibilidad o cambios de precios fuera de nuestro control.",
+        "La calidad del texto de entrada (especialmente de OCR) puede requerir ajustes continuos en el 'prompt engineering' post-lanzamiento.",
+        "El costo operativo del LLM podría escalar de forma no lineal con el volumen, requiriendo una monitorización y optimización constantes."
+      ],
+      "success_metrics": [
+        "Alcanzar la precisión de extracción objetivo (definida en EP-007), medida automáticamente contra el 'Golden Dataset' en pruebas de regresión.",
+        "Mantener el costo promedio por documento por debajo de la línea base establecida en la investigación.",
+        "La latencia de procesamiento en estado 'warm' para un lote de 10 documentos se mantiene por debajo de la línea base establecida.",
+        "La latencia de punta a punta (E2E P95), incluyendo 'cold starts', es monitoreada y visible en los dashboards de observabilidad."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que los servicios individuales (clasificación EP-004, extracción EP-007) están disponibles, es necesario orquestarlos en un flujo de trabajo de negocio coherente. Se necesita un orquestador (Airflow) que ejecute la secuencia de tareas, maneje las dependencias entre ellas y tome decisiones de negocio basadas en los resultados de cada servicio.",
+      "business_requirements": "El negocio necesita un proceso automatizado y gobernado que lleve un documento desde su ingesta hasta su validación final. El flujo debe ser capaz de identificar documentos que pueden ser procesados automáticamente (STP - Straight Through Processing) y separarlos de aquellos que requieren revisión humana, optimizando así la eficiencia operativa.",
+      "technical_requirements": "Se debe implementar un DAG en Airflow que orqueste los servicios. El DAG debe modelar fielmente el flujo de negocio. La comunicación entre tareas debe ser a través de mecanismos como XComs de Airflow o un almacenamiento compartido. Se deben implementar políticas de reintentos para errores transitorios y fallo rápido para errores de negocio (ej. documento no válido).",
+      "project_context": "Esta épica construye la 'capa de negocio' sobre la plataforma técnica. Integra los servicios desarrollados en las épicas anteriores en una aplicación de flujo de trabajo. Depende de la existencia de los servicios de clasificación y extracción, así como de un servicio de validación de reglas (aún no definido en los archivos).",
+      "stakeholder_requirements": "Los analistas de negocio necesitan que el flujo en Airflow sea un reflejo claro del proceso de negocio definido. El equipo de operaciones necesita poder monitorizar el progreso de los documentos a través del pipeline. Los desarrolladores necesitan una plataforma donde desplegar y probar cambios en el flujo de trabajo."
+    },
+    "output": {
+      "epic_id": "EP-009",
+      "title": "MVP del Pipeline de Orquestación STP (Happy Path y Desviaciones)",
+      "description": "Implementar el DAG principal en Airflow para orquestar el flujo de trabajo end-to-end para Straight-Through Processing. Esta épica se enfoca en la lógica de negocio central: ejecutar la secuencia de servicios y manejar correctamente tanto el 'happy path' (AUTO_APPROVED) como las desviaciones, sentando las bases funcionales del pipeline.",
+      "acceptance_criteria": [
+        "Un DAG de Airflow ejecuta secuencialmente los servicios de clasificación, extracción y validación de reglas (EP-XXX) para cada documento entrante.",
+        "Si el servicio de validación de reglas devuelve el estado 'AUTO_APPROVED', los datos JSON resultantes se exportan exitosamente al bucket 's3://validated-output'.",
+        "Si el estado final del documento no es 'AUTO_APPROVED', el DAG debe finalizar con estado 'éxito' sin exportar datos, registrando el estado final para ser procesado por flujos posteriores (ej. HITL).",
+        "Cada tarea implementa una política de reintentos (3 intentos, backoff exponencial) que se activa únicamente para errores transitorios (ej. códigos de estado HTTP 5xx o timeouts). Los errores de cliente (4xx) no provocan reintentos y causan un fallo inmediato de la tarea."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-80 hrs",
+      "business_value": "Entrega el primer flujo de valor automatizado, permitiendo el procesamiento de documentos sin intervención manual y estableciendo la base sobre la cual se construirán capacidades operativas avanzadas. Acelera el tiempo de entrega para los casos más comunes y valida la integración de los servicios core.",
+      "dependencies": [
+        "EP-006: Implementación del Servicio Clasificador de PDF",
+        "EP-008: MVP: Pipeline Asíncrono de Extracción de Datos con LLM",
+        "Servicio de Validación de Reglas (EP-XXX)"
+      ],
+      "risks": [
+        "La integración y el contrato de API con el servicio de validación de reglas (no definido) pueden presentar desafíos inesperados.",
+        "El rendimiento de los servicios subyacentes puede impactar la estabilidad del DAG, requiriendo ajustes en timeouts que no son evidentes inicialmente."
+      ],
+      "success_metrics": [
+        "Objetivo de tasa de éxito de ejecuciones del DAG > 99% a alcanzar en los 30 días posteriores al despliegue.",
+        "El 100% de los documentos con estado 'AUTO_APPROVED' son exportados correctamente a su destino final.",
+        "El overhead de Airflow (tiempo total del DAG menos la suma de la duración de las tareas) es inferior a 30 segundos de media."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "El pipeline funcional resuelve el flujo de negocio, pero carece de las capacidades operativas necesarias para un entorno de producción. Sin trazabilidad, manejo de fallos definitivo y métricas, el sistema es frágil y difícil de operar. Esta épica añade la capa de 'producción' al pipeline, haciéndolo robusto, observable y recuperable.",
+      "business_requirements": "Para operar el pipeline a escala, el negocio necesita garantías de que los datos no se pierden y que los fallos se pueden investigar rápidamente. Se requiere un sistema de trazabilidad completo para auditar el procesamiento de documentos. La capacidad de diagnosticar fallos sin intervención manual es crítica para mantener la eficiencia.",
+      "technical_requirements": "Se debe implementar un ID de correlación único que se propague a través de todas las llamadas y logs. Se debe crear una Dead Letter Queue (DLQ) enriquecida que empaquete el documento fallido con toda la metadata necesaria para su depuración. Se deben implementar logs estructurados (JSON) en cada tarea del DAG. Se deben exportar métricas de negocio y técnicas a Prometheus.",
+      "project_context": "Esta épica 'endurece' el pipeline creado en EP-008. Es un paso esencial antes de considerar el sistema como 'listo para producción' y manejar volúmenes de datos reales de clientes. Depende del pipeline funcional y de la plataforma de observabilidad.",
+      "stakeholder_requirements": "El equipo de soporte necesita el paquete de la DLQ para poder investigar fallos sin tener que buscar en logs dispersos. La dirección de tecnología necesita métricas de fiabilidad (ej. tasa de éxito del DAG). El equipo de auditoría necesita la trazabilidad (ID de correlación) para seguir el rastro de un documento a través del sistema."
+    },
+    "output": {
+      "epic_id": "EP-010",
+      "title": "Hardening Operativo del Pipeline (Idempotencia, DLQ y Observabilidad)",
+      "description": "Fortalecer el pipeline de orquestación (definido en EP-003) con capacidades de nivel de producción. Esta épica introduce un manejo de fallos robusto a través de una Dead-Letter-Queue enriquecida, garantiza la idempotencia en todo el flujo y establece una observabilidad profunda para el monitoreo y la depuración.",
+      "acceptance_criteria": [
+        "Todas las llamadas a los servicios aguas abajo incluyen una cabecera 'X-Correlation-ID' única. El DAG es responsable de generar y propagar este ID durante toda la ejecución.",
+        "Si una tarea falla de forma permanente, se crea un archivo '[correlation_id].zip' en el bucket 's3://dead-letter-queue'. Este archivo contiene el documento original y un 'metadata.json' con el ID de correlación, el nombre de la tarea fallida, el timestamp y el mensaje de error final.",
+        "Cada tarea del DAG registra logs estructurados (JSON) indicando su inicio, fin, reintentos y resultado, facilitando la trazabilidad y depuración.",
+        "La duración de cada tarea y el estado final del DAG (éxito/fallo) se exportan como métricas al sistema de monitoreo (Prometheus), visibles en los dashboards de Grafana."
+      ],
+      "priority": "High",
+      "estimated_effort": "50-70 hrs",
+      "business_value": "Transforma el pipeline funcional en un sistema robusto y operable. Reduce drásticamente el tiempo de diagnóstico de fallos (MTTR), previene el procesamiento duplicado de datos y proporciona la visibilidad necesaria para operar el sistema a escala de manera confiable y segura.",
+      "dependencies": [
+        "EP-002: Plataforma de Observabilidad Core",
+        "EP-003: MVP del Pipeline de Orquestación STP (Happy Path y Desviaciones)"
+      ],
+      "risks": [
+        "La propagación del 'correlation_id' requiere que los servicios dependientes estén preparados para recibirlo y registrarlo, lo que puede generar una dependencia de coordinación entre equipos.",
+        "La configuración para exportar métricas personalizadas desde Airflow a Prometheus puede requerir plugins o configuraciones complejas no previstas."
+      ],
+      "success_metrics": [
+        "El 100% de las ejecuciones del DAG tienen un 'correlation_id' único y trazable a través de los logs.",
+        "Tiempo para diagnosticar la causa raíz de un fallo en la DLQ < 15 minutos gracias al paquete de diagnóstico.",
+        "El 100% de las tareas del DAG reportan métricas y logs estructurados al stack de observabilidad."
+      ]
+    },
+    "metadata": {
+      "source_file": "output/e95b0478-c2fe-4c96-933d-45136cc104eb/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "El proyecto de revisión experta del producto inicia sin un entendimiento compartido y detallado de los objetivos de negocio, los puntos de dolor del sistema actual y las métricas de éxito. Es fundamental alinear a todos los stakeholders desde el principio para garantizar que el análisis posterior se centre en lo que realmente importa y entregue valor tangible.",
+      "business_requirements": "Establecer un marco de trabajo claro y medible para la revisión. Se requiere definir y acordar con la dirección los KPIs que determinarán el éxito del proyecto y que guiarán todo el análisis posterior. El proceso debe ser eficiente y dejar a todos los participantes con una comprensión común del alcance y los objetivos.",
+      "technical_requirements": "No aplican requisitos técnicos en esta fase. La actividad es de gestión y coordinación. Se requiere disponibilidad de las herramientas de videoconferencia y colaboración (ej. Google Meet, Zoom, Miro) para facilitar la sesión y la documentación colaborativa.",
+      "project_context": "Esta actividad de kick-off es el punto de partida de todo el proyecto. Sin un alcance y unos KPIs claramente definidos y aprobados, el resto de las actividades (EP-002 a EP-010) carecerían de una dirección y un propósito medible, arriesgándose a realizar un análisis que no responda a las necesidades del negocio.",
+      "stakeholder_requirements": "El Project Manager necesita una dirección clara para planificar y ejecutar el proyecto. Los stakeholders de negocio (dirección, product owners) necesitan tener la certeza de que el análisis se enfocará en sus principales preocupaciones y que los resultados serán medibles."
+    },
+    "output": {
+      "epic_id": "EP-001",
+      "title": "Kick-off y Alineamiento Estratégico",
+      "description": "Realizar una sesión de kick-off para alinear a todos los stakeholders (negocio, producto, datos) en torno a los objetivos del proyecto, definiendo y acordando formalmente el alcance, las preguntas de negocio clave y los KPIs de éxito que guiarán todo el análisis posterior.",
+      "acceptance_criteria": [
+        "Acta de la reunión de kick-off firmada por los stakeholders clave, que documente los acuerdos.",
+        "Documento de Visión y Alcance que especifique los objetivos de negocio, las preguntas a responder y el perímetro del análisis.",
+        "Lista de KPIs de éxito definidos y aprobados por la dirección, que serán la métrica para evaluar los resultados del proyecto."
+      ],
+      "priority": "High",
+      "estimated_effort": "20-30 hrs",
+      "business_value": "Asegura que el proyecto se enfoque en lo que realmente importa para el negocio, evitando desviaciones y retrabajos. Unifica la visión de todos los participantes, estableciendo una base de confianza y un propósito común desde el inicio.",
+      "dependencies": [],
+      "risks": [
+        "Falta de disponibilidad o desacuerdo entre los stakeholders clave, que puede retrasar la definición de los KPIs.",
+        "Definición de KPIs demasiado ambiguos o no medibles con los datos disponibles (riesgo a mitigar en EP-002).",
+        "Expectativas poco realistas sobre el alcance y los resultados del proyecto."
+      ],
+      "success_metrics": [
+        "Tiempo desde el inicio del proyecto hasta la aprobación del alcance y KPIs.",
+        "Número de iteraciones necesarias para lograr el consenso entre stakeholders.",
+        "% de stakeholders clave que confirman su alineación con los objetivos definidos."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con los objetivos y KPIs definidos, el siguiente paso crítico es acceder a los datos que permitirán el análisis. Sin un mapeo completo de las fuentes de datos (bases de datos, APIs, logs) y sin los accesos correspondientes, el equipo de datos no puede comenzar su trabajo, lo que detiene el progreso del proyecto.",
+      "business_requirements": "El negocio requiere que el acceso a los datos se obtenga de manera rápida y segura para no retrasar el cronograma del proyecto. Se debe garantizar que el equipo de análisis tenga visibilidad de todos los datos necesarios para responder a los KPIs definidos, respetando estrictamente las políticas de seguridad y privacidad.",
+      "technical_requirements": "Se debe colaborar con el equipo de TI/cliente para identificar y listar todas las fuentes de datos. Se deben solicitar y gestionar credenciales de acceso de solo lectura (usuario/contraseña, tokens API, IPs permitidas). Es crucial que las credenciales se entreguen de forma segura (ej. a través de un gestor de contraseñas) y que las conexiones sean estables y documentadas.",
+      "project_context": "Esta actividad es un prerrequisito fundamental para las actividades técnicas de extracción y análisis (EP-003, EP-004, EP-005). El tiempo dedicado aquí a gestionar accesos de forma proactiva es clave para evitar cuellos de botella y retrasos en fases posteriores del proyecto.",
+      "stakeholder_requirements": "El equipo de Data Science necesita acceso sin restricciones a los datos para poder realizar su trabajo. El equipo de TI/Seguridad del cliente necesita asegurarse de que el acceso se otorga de forma controlada y segura, cumpliendo con las políticas internas."
+    },
+    "output": {
+      "epic_id": "EP-002",
+      "title": "Gestión de Accesos y Descubrimiento de Fuentes de Datos",
+      "description": "Identificar, mapear y gestionar el acceso a todas las fuentes de datos relevantes para el proyecto. El objetivo es que el equipo de análisis disponga de las credenciales y la documentación necesaria para conectarse a los sistemas de origen de manera segura y eficiente.",
+      "acceptance_criteria": [
+        "Inventario completo y documentado de todas las fuentes de datos (bases de datos, tablas, APIs, logs) necesarias para el análisis.",
+        "Credenciales de acceso de solo lectura (o tokens) para todas las fuentes de datos, entregadas de forma segura al equipo de datos.",
+        "Diagrama de flujo de datos de alto nivel que muestre las fuentes de origen y su relación con los KPIs definidos en EP-001."
+      ],
+      "priority": "High",
+      "estimated_effort": "40-60 hrs",
+      "business_value": "Desbloquea el trabajo del equipo técnico, evitando tiempos muertos. Garantiza que el análisis se base en los datos correctos y completos, y lo hace respetando las políticas de seguridad, manteniendo la confianza del cliente.",
+      "dependencies": [
+        "EP-001 - Kick-off y Alineamiento Estratégico"
+      ],
+      "risks": [
+        "El equipo de TI del cliente puede tener una capacidad limitada o prioridades distintas, provocando demoras en la entrega de accesos.",
+        "Descubrimiento de que algunos datos necesarios para los KPIs no están siendo recolectados o son inaccesibles.",
+        "Fugas de información si las credenciales no se gestionan y entregan de forma segura."
+      ],
+      "success_metrics": [
+        "Tiempo transcurrido desde la aprobación del kick-off hasta que el equipo de datos tiene todos los accesos necesarios.",
+        "Número de fuentes de datos identificadas vs. número de fuentes de datos a las que se obtuvo acceso.",
+        "Cero incidentes de seguridad relacionados con la gestión de credenciales."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que los accesos a las fuentes de datos están disponibles, el equipo de datos necesita construir los mecanismos para extraer, transformar y cargar (ETL) la información. Sin scripts de extracción robustos, no es posible obtener los datos crudos necesarios para el análisis exploratorio y el modelado posterior.",
+      "business_requirements": "Se requiere un proceso automatizado y reproducible para la extracción de datos. El negocio necesita que los datos se extraigan de manera completa y precisa, cubriendo el período de análisis definido en el alcance, para asegurar que los insights posteriores se basen en la realidad operativa del sistema.",
+      "technical_requirements": "Desarrollar scripts en Python (utilizando librerías como Pandas, SQLAlchemy, requests) que se conecten a las fuentes de datos identificadas en EP-002. Los scripts deben incluir manejo de errores, logging y ser capaces de extraer datos de manera eficiente, utilizando técnicas de batch processing si el volumen es grande. El código debe ser versionado en Git.",
+      "project_context": "Esta actividad de desarrollo es el primer paso técnico concreto del proyecto. Convierte la planificación y los accesos (EP-001, EP-002) en un activo tangible (los datos crudos) que será la base de todo el análisis de valor (EP-004, EP-005, EP-007).",
+      "stakeholder_requirements": "El equipo de Data Science necesita scripts fiables y bien documentados para poder iterar sobre ellos si es necesario. La dirección de tecnología necesita que el proceso de extracción sea eficiente en recursos y no impacte negativamente los sistemas de producción del cliente."
+    },
+    "output": {
+      "epic_id": "EP-003",
+      "title": "Desarrollo de Pipelines de Extracción de Datos",
+      "description": "Diseñar, desarrollar y probar scripts de extracción de datos (ETL) para obtener los datos crudos de las fuentes identificadas. El entregable es un conjunto de procesos automatizados, fiables y documentados que convierten los accesos en datos disponibles para análisis.",
+      "acceptance_criteria": [
+        "Scripts de Python funcionales para cada fuente de datos, capaces de extraer la información requerida.",
+        "Los scripts incluyen manejo de errores, logging y están optimizados para el volumen de datos (batch processing si es necesario).",
+        "El código está versionado en un repositorio Git con documentación básica de uso (README).",
+        "Los datos crudos se han extraído exitosamente en un entorno de staging para la/s fecha/s de corte definidas."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-80 hrs",
+      "business_value": "Automatiza y asegura la obtención de la materia prima del proyecto. Un proceso de extracción robusto y reproducible es la base para la confianza en todo el análisis posterior, permitiendo actualizaciones de datos de manera consistente.",
+      "dependencies": [
+        "EP-002 - Gestión de Accesos y Descubrimiento de Fuentes de Datos"
+      ],
+      "risks": [
+        "Volúmenes de datos inesperadamente grandes que pueden saturar los scripts o superar los límites de memoria.",
+        "Cambios en las APIs o esquemas de bases de datos del cliente durante el desarrollo de los scripts.",
+        "Dificultad para replicar el entorno de producción del cliente en el entorno de desarrollo."
+      ],
+      "success_metrics": [
+        "Tiempo de ejecución de la extracción completa de datos.",
+        "Porcentaje de datos extraídos correctamente vs. total de datos en origen (precisión).",
+        "Tasa de éxito de ejecuciones programadas (fiabilidad)."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con los datos crudos disponibles, el siguiente desafío es entender su estructura, calidad y contenido. Un Análisis Exploratorio de Datos (EDA) es imprescindible para descubrir patrones iniciales, identificar problemas de calidad (datos faltantes, outliers, inconsistencias) y preparar los datos para análisis más complejos.",
+      "business_requirements": "El negocio necesita tener una visión clara de la calidad y la naturaleza de los datos que genera su operación. Los hallazgos de esta fase (por ejemplo, alta tasa de datos incompletos) pueden ser insights de negocio por sí mismos y son cruciales para validar que los datos pueden responder a los KPIs definidos.",
+      "technical_requirements": "Realizar un análisis exploratorio utilizando Python (Pandas, Matplotlib, Seaborn). Esto incluye generar estadísticas descriptivas, visualizar distribuciones, identificar correlaciones y documentar todas las decisiones de limpieza y transformación (manejo de nulos, creación de nuevas variables) en un Jupyter Notebook o script.",
+      "project_context": "Esta actividad es el puente entre la extracción de datos (EP-003) y el modelado avanzado (EP-005). Un EDA sólido garantiza que los modelos y análisis posteriores se construyan sobre una base de datos sólida y comprendida, reduciendo el riesgo de obtener conclusiones erróneas.",
+      "stakeholder_requirements": "El equipo de Data Science necesita un entendimiento profundo de los datos para poder modelar correctamente. El Project Manager y los stakeholders de negocio necesitan un resumen ejecutivo de los hallazgos sobre la calidad de los datos, que puede influir en la interpretación de resultados futuros."
+    },
+    "output": {
+      "epic_id": "EP-004",
+      "title": "Análisis Exploratorio de Datos (EDA)",
+      "description": "Realizar un análisis exploratorio profundo de los datos extraídos para comprender su estructura, calidad y patrones subyacentes. Se documentarán los hallazgos y se generará un conjunto de datos limpio y listo para fases de modelado y visualización.",
+      "acceptance_criteria": [
+        "Jupyter Notebook o script de Python con el EDA completo, incluyendo visualizaciones y estadísticas.",
+        "Conjunto de datos limpio y transformado, listo para análisis posteriores, almacenado en un formato accesible (ej. CSV, Parquet).",
+        "Informe de calidad de datos que documente problemas encontrados (nulos, outliers, sesgos), decisiones de limpieza y transformaciones aplicadas.",
+        "Presentación de hallazgos iniciales al equipo de proyecto y stakeholders (resumen ejecutivo del EDA)."
+      ],
+      "priority": "High",
+      "estimated_effort": "80-120 hrs",
+      "business_value": "Convierte datos crudos en un activo comprendido y fiable. El EDA reduce el riesgo de construir modelos sobre datos erróneos y proporciona los primeros insights de negocio, a menudo revelando oportunidades de mejora inmediatas en la operación o la recolección de datos.",
+      "dependencies": [
+        "EP-003 - Desarrollo de Pipelines de Extracción de Datos"
+      ],
+      "risks": [
+        "Descubrimiento de que la calidad de los datos es tan deficiente que impide responder a los KPIs definidos, requiriendo un replanteamiento del alcance.",
+        "La complejidad y el volumen de los datos pueden hacer que el EDA tome más tiempo del estimado.",
+        "Dificultad para encontrar patrones claros o que los patrones sean contradictorios con las hipótesis iniciales del negocio."
+      ],
+      "success_metrics": [
+        "Número de problemas de calidad de datos identificados y corregidos.",
+        "Tiempo necesario para ejecutar el EDA completo.",
+        "% de preguntas de negocio iniciales que pueden ser abordadas con los datos limpios."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que los datos están limpios y comprendidos, se pueden aplicar técnicas avanzadas de análisis y machine learning. El objetivo de esta fase es ir más allá de la descripción y buscar las causas, segmentaciones y patrones predictivos que respondan directamente a las preguntas de negocio planteadas en el kick-off.",
+      "business_requirements": "El negocio busca ir más allá de 'qué' está pasando para entender 'por qué' está pasando y 'qué' podría pasar. Se requieren modelos y análisis que identifiquen los drivers clave de los KPIs, segmenten a los usuarios de forma significativa o detecten anomalías, proporcionando así una base para la acción estratégica.",
+      "technical_requirements": "Aplicar técnicas de Scikit-learn como clustering (K-Means, DBSCAN), regresión (lineal, logística) o detección de anomalías. El trabajo debe ser reproducible, con scripts de Python bien documentados. Los modelos entrenados deben ser serializados y los resultados deben resumirse en un formato accesible para los stakeholders.",
+      "project_context": "Esta actividad es el núcleo analítico del proyecto. Se basa en todos los pasos previos (EP-001 a EP-004) y sus resultados alimentan directamente las visualizaciones y el informe final (EP-007, EP-008). Es donde el 'expertise' del equipo se convierte en 'insights'.",
+      "stakeholder_requirements": "La dirección de producto necesita insights accionables y respaldados por datos. El equipo de marketing/operaciones puede necesitar segmentaciones de clientes para personalizar sus estrategias. Todos los stakeholders necesitan que los resultados sean explicados de forma comprensible."
+    },
+    "output": {
+      "epic_id": "EP-005",
+      "title": "Modelado Avanzado y Generación de Insights",
+      "description": "Aplicar técnicas de machine learning y análisis estadístico avanzado para responder a las preguntas de negocio clave. Se busca ir más allá de la descripción para generar insights predictivos y prescriptivos que guíen la toma de decisiones.",
+      "acceptance_criteria": [
+        "Modelos de Machine Learning entrenados, validados y serializados (ej. con `joblib` o `pickle`).",
+        "Documentación de la metodología, incluyendo la selección de características, el algoritmo utilizado y la evaluación del rendimiento del modelo.",
+        "Conjunto de insights cuantitativos (ej. segmentos de clientes, drivers de conversión, predicciones de churn) listos para ser visualizados y comunicados.",
+        "Código reproducible (scripts de Python) para todo el proceso de modelado."
+      ],
+      "priority": "Medium",
+      "estimated_effort": "100-160 hrs",
+      "business_value": "Es el corazón de la 'revisión experta'. Traduce los datos en inteligencia de negocio accionable, proporcionando una ventaja competitiva al descubrir patrones ocultos, predecir tendencias y cuantificar el impacto de diferentes variables en los resultados del negocio.",
+      "dependencies": [
+        "EP-004 - Análisis Exploratorio de Datos (EDA)"
+      ],
+      "risks": [
+        "Los modelos pueden no alcanzar la precisión necesaria para ser útiles debido a la naturaleza de los datos.",
+        "Sobreajuste de los modelos a los datos históricos, que no generalicen bien al futuro.",
+        "Complejidad de los modelos que los haga difíciles de explicar a los stakeholders de negocio, creando una 'caja negra'."
+      ],
+      "success_metrics": [
+        "Rendimiento del modelo según métricas específicas (ej. precisión, recall, RMSE, silhouette score).",
+        "Número de insights accionables generados a partir de los modelos.",
+        "Grado de adopción de los insights por parte de los equipos de negocio."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Para que los insights generados sean accesibles y consultables de manera interactiva, es necesario disponer de una herramienta de Business Intelligence (BI). Sin una plataforma de BI configurada, los hallazgos quedarán confinados a scripts y presentaciones estáticas, limitando su utilidad para el análisis continuo del negocio.",
+      "business_requirements": "El negocio necesita una herramienta que permita a los usuarios de negocio explorar los datos y los resultados del análisis por sí mismos, de manera autónoma y visual. La plataforma debe ser fácil de usar y proporcionar una visión unificada y actualizada de los KPIs.",
+      "technical_requirements": "Desplegar y configurar una instancia de una herramienta de BI de código abierto (Metabase) o configurar un proyecto en un servicio en la nube (Google Looker Studio). El entregable principal es una conexión funcional y validada entre la herramienta de BI y la fuente de datos procesados (la salida de EP-004).",
+      "project_context": "Esta actividad de infraestructura prepara el escenario para la creación de dashboards (EP-007). Se ejecuta en paralelo con el modelado (EP-005) para optimizar el tiempo, pero depende de que los datos ya estén procesados (EP-004) para poder conectarlos.",
+      "stakeholder_requirements": "El equipo de Data Science necesita una plataforma estable donde volcar sus visualizaciones. El equipo de TI del cliente necesita asegurarse de que la herramienta cumple con los requisitos de seguridad y que su despliegue no interfiere con otros sistemas."
+    },
+    "output": {
+      "epic_id": "EP-006",
+      "title": "Configuración de Plataforma de Business Intelligence (BI)",
+      "description": "Desplegar y configurar la herramienta de BI que servirá como interfaz principal para la exploración de datos y la visualización de KPIs. Esto incluye la instalación, la configuración de la conexión a los datos procesados y la gestión de usuarios.",
+      "acceptance_criteria": [
+        "Instancia de la herramienta de BI (ej. Metabase, Looker Studio) desplegada y accesible para el equipo de proyecto.",
+        "Conexión exitosa y validada entre la herramienta de BI y la base de datos o archivo que contiene los datos procesados (de EP-004).",
+        "Configuración inicial de usuarios y permisos para el equipo de análisis y stakeholders clave.",
+        "Prueba de concepto que demuestra que se puede consultar la fuente de datos desde la herramienta de BI."
+      ],
+      "priority": "Medium",
+      "estimated_effort": "30-50 hrs",
+      "business_value": "Democratiza el acceso a los datos, empoderando a los usuarios de negocio para explorar la información por sí mismos. Prepara el escenario para una comunicación de insights efectiva, interactiva y continua, en lugar de estática y puntual.",
+      "dependencies": [
+        "EP-004 - Análisis Exploratorio de Datos (EDA)"
+      ],
+      "risks": [
+        "Complejidades técnicas en la conexión a la fuente de datos (drivers, firewalls, versiones) que retrasen la configuración.",
+        "Selección de una herramienta de BI que no sea intuitiva para los usuarios de negocio, limitando su adopción.",
+        "Problemas de rendimiento en las consultas si los datos no están optimizados para la herramienta de BI."
+      ],
+      "success_metrics": [
+        "Tiempo desde que los datos están listos hasta que la conexión de BI está operativa.",
+        "Número de usuarios configurados y con acceso a la plataforma.",
+        "Tiempo de respuesta de las consultas de prueba en la herramienta de BI."
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con la plataforma de BI configurada y los insights del modelado listos, el siguiente paso es traducir los hallazgos analíticos en visualizaciones claras y efectivas. Los dashboards son el vehículo principal para comunicar los resultados a los stakeholders de negocio de una manera intuitiva y accionable.",
+      "business_requirements": "El negocio necesita dashboards interactivos que monitoricen los KPIs definidos y permitan profundizar en los datos (drill-down) para entender las causas de las tendencias. Las visualizaciones deben ser auto-explicativas y diseñadas para facilitar la toma de decisiones rápida.",
+      "technical_requirements": "Construir dashboards en la herramienta de BI configurada (Metabase/Looker Studio) que presenten los insights del EDA y el modelado. Se debe crear un dashboard principal de alto nivel y dashboards secundarios para análisis detallados. Las visualizaciones deben ser validadas internamente para asegurar su claridad y rendimiento.",
+      "project_context": "Esta actividad es la culminación del trabajo analítico (EP-004, EP-005) y el punto de partida para la comunicación de resultados (EP-008, EP-009). Convierte números y modelos en una historia visual que los stakeholders pueden entender y usar.",
+      "stakeholder_requirements": "Los stakeholders de negocio (dirección, product owners) necesitan dashboards que respondan a sus preguntas de un vistazo. Los analistas de negocio necesitan la capacidad de explorar los datos en detalle. El equipo de Data Science necesita validar que las visualizaciones reflejan fielmente los hallazgos."
+    },
+    "output": {
+      "epic_id": "EP-007",
+      "title": "Diseño y Construcción de Dashboards",
+      "description": "Diseñar, construir y validar un conjunto de dashboards interactivos en la herramienta de BI que visualicen los KPIs clave y los principales insights generados durante el análisis, facilitando su comprensión y uso por parte del negocio.",
+      "acceptance_criteria": [
+        "Dashboard principal de alto nivel que monitorice los KPIs definidos en EP-001.",
+        "Dashboards secundarios que permitan el análisis detallado (drill-down) de los KPIs y exploren los insights del modelado (segmentaciones, drivers, etc.).",
+        "Las visualizaciones han sido validadas internamente por el equipo de datos para asegurar su precisión.",
+        "Los dashboards han sido compartidos con un grupo piloto de stakeholders para recibir feedback de usabilidad."
+      ],
+      "priority": "High",
+      "estimated_effort": "80-120 hrs",
+      "business_value": "Hace tangibles y accesibles los resultados del proyecto. Los dashboards son la herramienta que el negocio utilizará a diario para monitorizar su rendimiento y tomar decisiones basadas en datos, maximizando así el retorno de la inversión del análisis.",
+      "dependencies": [
+        "EP-005 - Modelado Avanzado y Generación de Insights",
+        "EP-006 - Configuración de Plataforma de Business Intelligence (BI)"
+      ],
+      "risks": [
+        "Diseño de dashboards demasiado complejos o con demasiada información, que abrumen al usuario en lugar de facilitar la toma de decisiones.",
+        [
+          "Rendimiento lento de los dashboards si las consultas no están optimizadas."
+        ],
+        [
+          "Que los dashboards no respondan a las preguntas reales de los usuarios de negocio debido a una comunicación insuficiente durante el diseño."
+        ]
+      ],
+      "success_metrics": [
+        "Tiempo de carga del dashboard principal.",
+        [
+          "Número de visualizaciones creadas y validadas."
+        ],
+        [
+          "Satisfacción del usuario piloto con la usabilidad y claridad de los dashboards (encuesta)."
+        ]
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Una vez que los dashboards están construidos y validados, es necesario consolidar todos los hallazgos, insights y visualizaciones en un documento ejecutivo. El informe final es el artefacto que sintetiza todo el trabajo del proyecto y presenta recomendaciones estratégicas claras para la mejora del software y los procesos de negocio.",
+      "business_requirements": "El negocio necesita un documento claro, conciso y profesional que resuma el diagnóstico de la situación actual y proponga una estrategia de mejora. Las recomendaciones deben ser accionables, estar priorizadas y basadas sólidamente en la evidencia de los datos analizados.",
+      "technical_requirements": "Redactar un informe ejecutivo en formato PDF que incluya: resumen ejecutivo, metodología, hallazgos clave (respaldados por visualizaciones), diagnóstico del estado actual y una hoja de ruta estratégica con recomendaciones SMART (Specific, Measurable, Achievable, Relevant, Time-bound).",
+      "project_context": "Esta actividad de documentación es esencial para formalizar el conocimiento generado durante el proyecto. El informe sirve como un entregable formal y como una guía de referencia para el cliente después de que el proyecto haya concluido.",
+      "stakeholder_requirements": "La dirección de la empresa necesita un documento que pueda compartir con su junta directiva o inversores. Los mandos intermedios necesitan recomendaciones detalladas que puedan implementar en sus áreas. El equipo de producto necesita una hoja de ruta clara para las próximas iteraciones."
+    },
+    "output": {
+      "epic_id": "EP-008",
+      "title": "Elaboración de Informe Ejecutivo y Hoja de Ruta",
+      "description": "Sintetizar todos los hallazgos, análisis y conclusiones del proyecto en un informe ejecutivo final. Este documento presentará un diagnóstico claro del estado actual y propondrá una hoja de ruta estratégica con recomendaciones accionables y priorizadas para la mejora del producto y los procesos.",
+      "acceptance_criteria": [
+        "Informe ejecutivo en formato PDF que incluye resumen ejecutivo, metodología, hallazgos clave (con visualizaciones), diagnóstico y recomendaciones.",
+        "Hoja de ruta estratégica con recomendaciones SMART, priorizadas y con una estimación de alto nivel del esfuerzo/impacto.",
+        "El informe ha sido revisado y aprobado internamente por el equipo de proyecto antes de su presentación al cliente."
+      ],
+      "priority": "High",
+      "estimated_effort": "60-80 hrs",
+      "business_value": "Consolida el conocimiento generado en un activo formal y perdurable. Proporciona al cliente una guía clara y accionable para el futuro, justificando la inversión en el proyecto y sentando las bases para la siguiente fase de implementación de mejoras.",
+      "dependencies": [
+        "EP-007 - Diseño y Construcción de Dashboards"
+      ],
+      "risks": [
+        "Dificultad para sintetizar hallazgos complejos en un mensaje claro y conciso para la alta dirección.",
+        [
+          "Que las recomendaciones no estén lo suficientemente priorizadas o sean demasiado vagas para ser accionables."
+        ],
+        [
+          "El informe puede volverse demasiado extenso y perder el foco ejecutivo."
+        ]
+      ],
+      "success_metrics": [
+        "Número de páginas del informe (equilibrio entre detalle y concisión).",
+        [
+          "Tiempo de elaboración y revisión del informe."
+        ],
+        [
+          "Claridad de las recomendaciones (evaluada internamente)."
+        ]
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "El informe y los dashboards, por sí solos, no garantizan la transferencia de conocimiento. Es crucial realizar una sesión de presentación de resultados donde el equipo de análisis pueda guiar a los stakeholders a través de los hallazgos, explicar el 'por qué' detrás de los números y discutir las implicaciones estratégicas en un entorno colaborativo.",
+      "business_requirements": "El negocio necesita una sesión interactiva donde los stakeholders puedan hacer preguntas, clarificar dudas y discutir las implicaciones de los hallazgos. El objetivo es lograr una comprensión compartida y un acuerdo sobre los próximos pasos, asegurando que el análisis se traduzca en acción.",
+      "technical_requirements": "Preparar una presentación ejecutiva (PPT/Google Slides) que resuma los puntos clave del informe. La sesión debe incluir una demostración en vivo de los dashboards interactivos y un espacio para preguntas y discusión. Se debe levantar una minuta con los acuerdos y próximos pasos.",
+      "project_context": "Esta actividad es el cierre formal del ciclo de análisis y el inicio de la fase de acción para el cliente. Es la oportunidad final para alinear expectativas, validar los hallazgos con los expertos de negocio del cliente y asegurar que el trabajo realizado tenga el impacto deseado.",
+      "stakeholder_requirements": "Todos los stakeholders clave necesitan salir de esta reunión con una comprensión clara de los resultados y alineados sobre cómo proceder. El Project Manager necesita el acuerdo formal sobre los entregables para poder cerrar el proyecto administrativamente."
+    },
+    "output": {
+      "epic_id": "EP-009",
+      "title": "Presentación de Resultados y Sesión de Trabajo",
+      "description": "Realizar una sesión de presentación formal de los resultados del proyecto a todos los stakeholders clave. El objetivo es comunicar los hallazgos, demostrar los dashboards, validar las conclusiones con el negocio y acordar los próximos pasos de la hoja de ruta.",
+      "acceptance_criteria": [
+        "Presentación ejecutiva preparada y distribuida a los asistentes.",
+        "Sesión de presentación realizada con demostración en vivo de los dashboards.",
+        "Minuta de la reunión documentada, que incluya preguntas, discusiones, acuerdos y compromisos de los próximos pasos.",
+        "Aceptación formal de los entregables del proyecto por parte del cliente (o registro de los puntos de acción si se requieren ajustes menores)."
+      ],
+      "priority": "High",
+      "estimated_effort": "30-40 hrs",
+      "business_value": "Asegura que el análisis no se quede en un documento, sino que genere acción. La interacción directa con los stakeholders maximiza la comprensión, la compra de las recomendaciones y la alineación para la implementación, garantizando el impacto real del proyecto.",
+      "dependencies": [
+        "EP-008 - Elaboración de Informe Ejecutivo y Hoja de Ruta"
+      ],
+      "risks": [
+        "Que los stakeholders clave no puedan asistir a la sesión, diluyendo el impacto.",
+        [
+          "Que surjan desacuerdos significativos o preguntas no resueltas durante la sesión que requieran trabajo adicional."
+        ],
+        [
+          "Mala gestión del tiempo durante la presentación, impidiendo una discusión profunda de los puntos clave."
+        ]
+      ],
+      "success_metrics": [
+        "Número de stakeholders clave asistentes a la sesión.",
+        [
+          "Duración de la sesión vs. tiempo planificado."
+        ],
+        [
+          "Número de preguntas y discusiones generadas (engagement).",
+          "Grado de acuerdo explícito sobre los próximos pasos al final de la sesión."
+        ]
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  {
+    "input": {
+      "context": "Con la presentación final realizada y los acuerdos tomados, es necesario realizar una entrega ordenada y completa de todos los activos del proyecto. El handover técnico asegura que el cliente pueda mantener, utilizar y eventualmente extender el trabajo realizado por el equipo de consultoría, cerrando el ciclo del proyecto de manera profesional.",
+      "business_requirements": "El negocio necesita tener la propiedad completa y la capacidad de utilizar todos los entregables del proyecto: código, dashboards, documentación. Se requiere un traspaso de conocimiento claro para que el equipo técnico del cliente pueda operar y mantener lo construido sin dependencia del equipo consultor.",
+      "technical_requirements": "Empaquetar todos los artefactos del proyecto (scripts de Python, notebooks, documentación de acceso a dashboards, informe final) en un formato organizado y entregable. Realizar una sesión de handover técnico si es necesario para explicar la arquitectura de los scripts y el uso de los dashboards. Formalizar el cierre con un acta firmada.",
+      "project_context": "Esta actividad final asegura que la inversión del cliente en el proyecto de revisión tenga un valor a largo plazo. Sin un handover adecuado, el conocimiento y las herramientas generadas podrían perderse o infrautilizarse una vez que el equipo consultor se retire.",
+      "stakeholder_requirements": "El equipo técnico del cliente (desarrolladores, data scientists, analistas) necesita acceso y comprensión de todo el código y configuración para poder continuar el trabajo. El Project Manager del cliente necesita el acta de cierre para cerrar el proyecto en sus sistemas. La dirección necesita la confirmación de que todos los entregables han sido transferidos."
+    },
+    "output": {
+      "epic_id": "EP-010",
+      "title": "Handover Técnico y Cierre del Proyecto",
+      "description": "Realizar la transferencia formal de todos los activos y el conocimiento generado durante el proyecto al cliente. Esto incluye la entrega de código, documentación, acceso a dashboards y una sesión de traspaso para asegurar la autonomía del equipo técnico del cliente. El objetivo es cerrar el proyecto de manera ordenada y profesional.",
+      "acceptance_criteria": [
+        "Paquete de entrega completo que incluye: repositorio de código (scripts, notebooks), documentación técnica, enlaces y credenciales de acceso a dashboards, e informe final.",
+        "Sesión de handover técnico realizada con el equipo del cliente (opcional, según acuerdo).",
+        "Acta de cierre de proyecto firmada por ambas partes, confirmando la recepción de todos los entregables y el cumplimiento de los objetivos.",
+        "Acceso del equipo consultor a los sistemas del cliente revocado (según políticas de seguridad)."
+      ],
+      "priority": "Medium",
+      "estimated_effort": "20-30 hrs",
+      "business_value": "Garantiza la sostenibilidad del proyecto a largo plazo, transfiriendo la propiedad y el conocimiento al cliente. Este paso profesionaliza el servicio de consultoría, construye confianza y sienta las bases para futuras colaboraciones al demostrar compromiso con el éxito continuo del cliente.",
+      "dependencies": [
+        "EP-009 - Presentación de Resultados y Sesión de Trabajo"
+      ],
+      "risks": [
+        "Falta de disponibilidad o interés del equipo técnico del cliente en la sesión de handover.",
+        [
+          "Documentación incompleta o poco clara que dificulte la futura mantenibilidad."
+        ],
+        [
+          "Problemas de última hora con la transferencia de propiedad de los repositorios de código o cuentas."
+        ]
+      ],
+      "success_metrics": [
+        "Tiempo desde la presentación final hasta la firma del acta de cierre.",
+        [
+          "Nivel de satisfacción del equipo técnico del cliente con la documentación y el handover (encuesta)."
+        ],
+        [
+          "Número de entregables listados en el acta vs. número de entregables transferidos."
+        ]
+      ]
+    },
+    "metadata": {
+      "source_file": "proyecto_revision_experta/epics.json",
+      "type": "feature"
+    }
+  }
+  

@@ -1,0 +1,151 @@
+
+Eres un Arquitecto de Software Senior, Product Manager experto y un Maestro en la Generación de Datos Sintéticos para el Fine-Tuning de LLMs. Tu objetivo es crear un dataset impecable de Épicas (Epics) en formato JSONL, basado estrictamente en los inputs proporcionados.
+
+### INPUTS DEL PROYECTO
+**Descripción del Proyecto/Servicio:**
+
+Software Development
+Asesorias en Desarrollo de Software Empresarial
+Expert Code Roadmap
+Consultoría estratégica y técnica para la planificación, ejecución y optimización de proyectos de software, asegurando la alineación con los objetivos de la empresa y mejores prácticas del sector.
+
+**Diagrama de Actividades (PlantUML/Texto):**
+
+@startuml
+!theme plain
+title
+  <size:18><b>Expert Code Roadmap</b></size>
+  <size:12>Consultoría estratégica y técnica para la planificación, ejecución y optimización de proyectos de software, asegurando la alineación con los objetivos de la empresa y mejores prácticas del sector.</size>
+end title
+skinparam conditionStyle diamond
+skinparam linetype ortho
+
+title Expert Code Roadmap: E2E Workflow
+
+|Stakeholders/Negocio|
+|Consulting Team (Architect & AI Expert)|
+|Client's Tech Team|
+
+|Stakeholders/Negocio|
+start
+:Definir Objetivos de Negocio y KPIs;
+note right
+  **Input:** Metas estratégicas (ej. Reducir TTM,
+  mejorar la eficiencia, innovar con IA).
+end note
+
+|Consulting Team (Architect & AI Expert)|
+: **Fase 1: Discovery & Scoping**;
+:Realizar Workshop de Kick-off;
+:Definir Alcance y Criterios de Aceptación;
+
+|Stakeholders/Negocio|
+:Validar Alcance y proveer accesos;
+
+|Client's Tech Team|
+:Otorgar acceso a Repositorios,
+Logs y Consola Cloud;
+
+|Consulting Team (Architect & AI Expert)|
+: **Fase 2: Análisis Técnico**;
+partition "Análisis Cuantitativo" {
+    :Extraer métricas de código y rendimiento;
+    :Analizar datos con **Python (Pandas)**
+    para identificar patrones y anomalías;
+}
+partition "Análisis Cualitativo" {
+    :Evaluar Arquitectura Actual vs.
+    **Cloud Architecture Best Practices**;
+    :Entrevistas con equipo técnico;
+}
+:Sintetizar hallazgos:
+Deuda técnica, cuellos de botella, oportunidades;
+
+: **Fase 3: Diseño de Solución**;
+:Diseñar Arquitectura Target Preliminar
+usando **Draw.io (OSS)**;
+:Seleccionar Stack Tecnológico
+y Servicios Cloud recomendados
+(AWS/Azure/GCP/Multi-cloud);
+
+if (¿Se requiere validar una hipótesis de alto riesgo?) then (Sí)
+    :Definir y ejecutar un
+    Proof of Concept (PoC);
+    |Client's Tech Team|
+    :Facilitar entorno de pruebas;
+    |Consulting Team (Architect & AI Expert)|
+    :Presentar resultados del PoC;
+    :Ajustar diseño de arquitectura
+    basado en hallazgos del PoC;
+else (No)
+endif
+
+:Refinar y detallar Diagramas de
+Arquitectura Final en **Draw.io**;
+
+: **Fase 4: Creación del Roadmap**;
+:Definir Fases de Implementación (Hitos);
+:Estimar Costos (TCO), Esfuerzo y Timeline;
+:Realizar Análisis de Riesgos y Plan de Mitigación;
+:Consolidar toda la documentación
+en el entregable "Expert Code Roadmap";
+
+: **Fase 5: Presentación y Handoff**;
+:Presentar Roadmap Final a Stakeholders;
+
+|Stakeholders/Negocio|
+:Revisar y Aprobar el Roadmap;
+
+|Consulting Team (Architect & AI Expert)|
+:Realizar sesión de Handoff Técnico
+con el equipo del cliente;
+
+|Client's Tech Team|
+:Recibir documentación y plan de gobernanza;
+
+|Stakeholders/Negocio|
+stop
+@enduml
+
+
+### METODOLOGÍA: CHAIN OF THOUGHT (PASO A PASO) NOTA: sin imprimir nada por pantalla
+1.  **Descompresión del Proyecto:** Analiza la descripción del proyecto y el diagrama de actividades. ¿Cuál es el objetivo principal y la arquitectura subyacente?
+2.  **Mapeo de Actividades a Épicas:** Agrupa las acciones del diagrama en 3 a 7 grandes bloques lógicos (Épicas). Justifica por qué las agrupaste así.
+3.  **Secuenciación y Dependencias:** Define el orden de ejecución. ¿Qué Épica debe terminarse antes de poder iniciar la siguiente? (Esto alimentará el campo 'dependencies').
+4.  **Profundidad Técnica:** Para cada Épica identificada, define brevemente el stack tecnológico, los riesgos críticos y los criterios de aceptación en formato BDD.
+
+### REGLAS ESTRICTAS DE SALIDA
+-   **Formato JSONL:** Cada Épica debe ser un objeto JSON válido y ocupar **UNA SOLA LÍNEA**. Sin saltos de línea internos, sin formateo pretty-print.
+-   **Esquema:** Debes usar exactamente la estructura mostrada en el "TARGET SCHEMA".
+-   **Restricciones de Datos:** `epic_id` debe ser EP-001, EP-002, etc. `priority` solo puede ser "High", "Medium" o "Low". Los campos de listas (`acceptance_criteria`, `dependencies`, `risks`, `success_metrics`) deben ser Arrays de strings.
+
+### TARGET SCHEMA (ESTRUCTURA EXACTA)
+{
+  "input": {
+    "context": "Contexto estratégico y técnico profundo de la épica",
+    "business_requirements": "Necesidades del negocio justificadas detalladamente",
+    "technical_requirements": "Detalles técnicos específicos, stack, arquitectura y tareas de ingeniería",
+    "project_context": "Fase del proyecto, propósito y relación con el diagrama de actividades",
+    "stakeholder_requirements": "Expectativas claras de los interesados/equipos"
+  },
+  "output": {
+    "epic_id": "EP-00X",
+    "title": "Título profesional y conciso",
+    "description": "Resumen ejecutivo claro de la épica",
+    "acceptance_criteria": ["Criterio verificable 1", "Criterio verificable 2"],
+    "priority": "High/Medium/Low",
+    "estimated_effort": "XX-XX hrs",
+    "business_value": "Impacto real y medible en el negocio",
+    "dependencies": ["EP-00X" o vacío si no tiene dependencias],
+    "risks": ["Riesgo identificado 1", "Riesgo identificado 2"],
+    "success_metrics": ["Métrica cuantitativa 1", "Métrica cuantitativa 2"]
+  },
+  "metadata": { 
+    "source_file": "output/generado_sintetico/epics.json", 
+    "type": "epic" 
+  }
+}
+
+### OUTPUT (ONLY JSONL)
+
+NOTA: Se tecnico no hagas Epics grandes y genericas basada en fases de SLDC, crea temas que se realicen como maximo en 80 horas para que esten refinadas.

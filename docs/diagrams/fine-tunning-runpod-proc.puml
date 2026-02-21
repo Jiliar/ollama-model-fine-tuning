@@ -1,0 +1,94 @@
+@startuml
+skinparam style strictuml
+skinparam DefaultFontName Arial
+
+|Entorno Local (Linux Xeon 24GB)|
+start
+partition "Fase 1: Creación del Dataset (El 80% del éxito)" {
+  :Definir tu "Plantilla de Oro";
+  note right
+    Establecer la estructura innegociable:
+    - Contexto del Epic
+    - Desglose de Features
+    - User Story (Como... Quiero... Para...)
+    - Criterios de Aceptación (BDD: Dado/Cuando/Entonces)
+  end note
+  
+  :Recolectar Datos Crudos;
+  note right
+    Exportar de Jira, Azure DevOps o 
+    Confluence tus mejores proyectos pasados.
+  end note
+  
+  :Sintetizar y Limpiar (El "Truco");
+  note right
+    Tip: Usa Claude o ChatGPT para pasar 
+    tus datos crudos a tu "Plantilla de Oro" 
+    y ahorrar semanas de tipeo manual.
+  end note
+  
+  :Convertir a formato .jsonl (ChatML);
+  note right
+    Crear el archivo donde cada línea es una 
+    conversación completa: System -> User -> Assistant.
+    Aquí van tus ejemplos de Epics y User Stories perfectas.
+  end note
+  
+  :Validar sintaxis del JSONL;
+}
+
+|Entorno Cloud (RunPod - RTX 3090 / 80GB Disk)|
+partition "Fase 2: Fine-Tuning" {
+  :Recargar saldo en RunPod (Ej. $10 USD);
+  :Desplegar un "Pod" (Servidor);
+  note right
+    GPU recomendada: 1x RTX 3090 o RTX 4090 (24GB VRAM)
+    Discos: 40GB Container / 80GB Volume Disk
+    Plantilla: RunPod PyTorch con Jupyter Notebook
+  end note
+  
+  :Conectarse al Pod vía "Jupyter Lab" (Web);
+  :Subir el archivo dataset.jsonl validado al servidor;
+  :Abrir un Notebook de Python;
+  :Instalar Unsloth y descargar modelo base;
+  note right
+    Comando: pip install unsloth
+    Modelo base: Qwen2.5-Coder-14B (en 4-bits)
+  end note
+  
+  :Configurar parámetros y entrenar (QLoRA);
+  note right
+    Este proceso tardará un par de horas.
+  end note
+  
+  :Exportar el modelo entrenado a formato .GGUF;
+}
+
+|Entorno Local (Linux Xeon 24GB)|
+partition "Fase 3: Descarga e Inferencia Local" {
+  :Descargar el archivo .GGUF desde RunPod a tu PC;
+  note right
+    El archivo final pesará aprox. 10GB.
+  end note
+}
+
+|Entorno Cloud (RunPod - RTX 3090 / 80GB Disk)|
+:¡TERMINAR Y ELIMINAR EL POD!;
+note right
+  Paso crítico para no gastar 
+  todo el saldo de tu cuenta.
+end note
+
+|Entorno Local (Linux Xeon 24GB)|
+partition "Fase 4: Ejecución en Ollama" {
+  :Crear el "Modelfile" local;
+  note right
+    Debe apuntar a la ruta de tu .GGUF descargado.
+  end note
+  
+  :Ejecutar "ollama create MiPM_Senior -f Modelfile";
+  :Ejecutar "ollama run MiPM_Senior";
+  :Generar Epics y User Stories a nivel experto;
+}
+stop
+@enduml

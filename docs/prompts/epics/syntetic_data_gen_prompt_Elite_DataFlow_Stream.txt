@@ -1,0 +1,191 @@
+
+Eres un Arquitecto de Software Senior, Product Manager experto y un Maestro en la Generación de Datos Sintéticos para el Fine-Tuning de LLMs. Tu objetivo es crear un dataset impecable de Épicas (Epics) en formato JSONL, basado estrictamente en los inputs proporcionados.
+
+### INPUTS DEL PROYECTO
+**Descripción del Proyecto/Servicio:**
+Elaboración de datapipelines (ETL, ELT)
+Elite DataFlow Stream
+Creación de flujos de trabajo automatizados para la ingesta, transformación y carga de datos, utilizando metodologías como Extract, Transform, Load (ETL) o Extract, Load, Transform (ELT).
+
+**Diagrama de Actividades (PlantUML/Texto):**
+@startuml
+!theme plain
+title
+  <size:18><b>Elite DataFlow Stream</b></size>
+  <size:12>Creación de flujos de trabajo automatizados para la ingesta, transformación y carga de datos, utilizando metodologías como Extract, Transform, Load (ETL) o Extract, Load, Transform (ELT).</size>
+end title
+skinparam conditionStyle diamond
+skinparam linetype ortho
+
+title Elite DataFlow Stream: E2E Workflow
+
+|Stakeholders/Negocio|
+|Data & AI Team|
+|DevOps/Infra|
+|CI/CD Pipeline|
+
+|Stakeholders/Negocio|
+start
+:Definir Requisitos del Flujo de Datos y KPIs;
+:Validar Fuentes y Destinos;
+
+|Data & AI Team|
+:Analizar Requisitos y Perfilar Datos;
+
+' === ENTORNO DE DESARROLLO ===
+group "**Environment: DEVELOPMENT**" {
+    |Data & AI Team|
+    :Diseñar Arquitectura del Pipeline;
+
+    if (Estrategia?) then (ELT)
+        :Priorizar carga rápida a DWH
+        y transformación in-situ;
+        note right
+            Stack: Airflow + Dataflow (para carga) + dbt (para T)
+        end note
+    else (ETL)
+        :Priorizar transformación
+        antes de la carga en DWH;
+        note left
+            Stack: Airflow + Dataflow/Spark (para E y T)
+        end note
+    endif
+
+    |DevOps/Infra|
+    :Provisionar Infraestructura Dev
+    (Composer, GCS, BigQuery, IAM)
+    con Terraform/IaC;
+
+    |Data & AI Team|
+    :Configurar Proyecto dbt y
+    Estructura del Repositorio Git;
+
+    repeat
+        :<b>Sprint N:</b>
+        Desarrollar DAG en <b>Airflow</b>;
+        :Codificar Job de Procesamiento
+        (<b>Python/Beam</b> para Dataflow o <b>PySpark</b>);
+        :Desarrollar Modelos y Tests en <b>dbt</b>;
+        :Escribir Pruebas Unitarias (pytest);
+        :Commit y Push a Repositorio Git;
+
+        |CI/CD Pipeline|
+        :Trigger: Git Push a 'develop';
+        :Ejecutar Linter y Análisis Estático;
+        :Ejecutar Pruebas Unitarias (pytest);
+        
+    repeat while (¿Errores o Features pendientes?) is (Sí)
+    
+    |CI/CD Pipeline|
+    :Build Artifacts;
+}
+
+' === ENTORNO DE STAGING / QA ===
+group "**Environment: STAGING / QA**" {
+    |CI/CD Pipeline|
+    :Despliegue Automático a Staging;
+    
+    |DevOps/Infra|
+    :Sincronizar DAGs a Composer (Staging);
+    :Desplegar artefactos dbt (Staging);
+    
+    |Data & AI Team|
+    :Ejecutar Pruebas de Datos (dbt test)
+    con datos ofuscados/sample;
+    
+    |Stakeholders/Negocio|
+    :UAT (User Acceptance Testing);
+}
+
+if (Pruebas/UAT OK?) then (No)
+    |Data & AI Team|
+    :Recibir Notificación de Fallo;
+    :Corregir Código (Volver a Dev);
+    detach
+else (Sí)
+
+' === ENTORNO DE PRODUCCIÓN ===
+group "**Environment: PRODUCTION**" {
+    |CI/CD Pipeline|
+    :Merge a 'main' (aprobado);
+    :<b>Trigger Despliegue a Producción</b>;
+    
+    |DevOps/Infra|
+    :Provisionar/Actualizar Infra Prod (Terraform);
+    :Configurar Alertas y Dashboards
+    en GCP Monitoring;
+    :Sincronizar DAGs a bucket de <b>Composer Prod</b>;
+    :Desplegar artefactos de dbt (Prod);
+
+    |Data & AI Team|
+    :Activar y Programar DAG en <b>Airflow UI</b>;
+
+    partition "Ciclo de Ejecución en Producción" {
+        |Data & AI Team|
+        :<b>[Orquestación]</b>
+        Airflow Scheduler dispara el DAG;
+        
+        :<b>[Ejecución]</b>
+        Airflow ejecuta tasks que lanzan jobs
+        en <b>GCP Dataflow</b> o <b>Spark</b>;
+        
+        :<b>[Transformación ELT]</b>
+        Airflow ejecuta <b>'dbt run'</b> y <b>'dbt test'</b>;
+        
+        :<b>[Monitorización]</b>
+        Supervisar Logs en Cloud Logging y
+        Métricas en Airflow UI / GCP Monitoring;
+    }
+}
+
+|Stakeholders/Negocio|
+:Consumir Datos Confiables
+desde BigQuery;
+:Visualizar Resultados en Dashboards (Looker, etc.);
+stop
+
+endif
+@enduml
+
+
+### METODOLOGÍA: CHAIN OF THOUGHT (PASO A PASO) NOTA: sin imprimir nada por pantalla
+1.  **Descompresión del Proyecto:** Analiza la descripción del proyecto y el diagrama de actividades. ¿Cuál es el objetivo principal y la arquitectura subyacente?
+2.  **Mapeo de Actividades a Épicas:** Agrupa las acciones del diagrama en 3 a 7 grandes bloques lógicos (Épicas). Justifica por qué las agrupaste así.
+3.  **Secuenciación y Dependencias:** Define el orden de ejecución. ¿Qué Épica debe terminarse antes de poder iniciar la siguiente? (Esto alimentará el campo 'dependencies').
+4.  **Profundidad Técnica:** Para cada Épica identificada, define brevemente el stack tecnológico, los riesgos críticos y los criterios de aceptación en formato BDD.
+
+### REGLAS ESTRICTAS DE SALIDA
+-   **Formato JSONL:** Cada Épica debe ser un objeto JSON válido y ocupar **UNA SOLA LÍNEA**. Sin saltos de línea internos, sin formateo pretty-print.
+-   **Esquema:** Debes usar exactamente la estructura mostrada en el "TARGET SCHEMA".
+-   **Restricciones de Datos:** `epic_id` debe ser EP-001, EP-002, etc. `priority` solo puede ser "High", "Medium" o "Low". Los campos de listas (`acceptance_criteria`, `dependencies`, `risks`, `success_metrics`) deben ser Arrays de strings.
+
+### TARGET SCHEMA (ESTRUCTURA EXACTA)
+{
+  "input": {
+    "context": "Contexto estratégico y técnico profundo de la épica",
+    "business_requirements": "Necesidades del negocio justificadas detalladamente",
+    "technical_requirements": "Detalles técnicos específicos, stack, arquitectura y tareas de ingeniería",
+    "project_context": "Fase del proyecto, propósito y relación con el diagrama de actividades",
+    "stakeholder_requirements": "Expectativas claras de los interesados/equipos"
+  },
+  "output": {
+    "epic_id": "EP-00X",
+    "title": "Título profesional y conciso",
+    "description": "Resumen ejecutivo claro de la épica",
+    "acceptance_criteria": ["Criterio verificable 1", "Criterio verificable 2"],
+    "priority": "High/Medium/Low",
+    "estimated_effort": "XX-XX hrs",
+    "business_value": "Impacto real y medible en el negocio",
+    "dependencies": ["EP-00X" o vacío si no tiene dependencias],
+    "risks": ["Riesgo identificado 1", "Riesgo identificado 2"],
+    "success_metrics": ["Métrica cuantitativa 1", "Métrica cuantitativa 2"]
+  },
+  "metadata": { 
+    "source_file": "output/generado_sintetico/epics.json", 
+    "type": "epic" 
+  }
+}
+
+### OUTPUT (ONLY JSONL)
+
+NOTA: Se tecnico no hagas Epics grandes y genericas basada en fases de SLDC, crea temas que se realicen como maximo en 80 horas para que esten refinadas.
